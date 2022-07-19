@@ -10,10 +10,10 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
 
-LETTERS = set(ascii_uppercase.replace('Q', ''))
-SINGLE_VOWELS = set('AEIOUY')
+LETTERS = set(ascii_uppercase.replace('Q', '').replace('C', ''))
+SINGLE_VOWELS = set('AEIOU')
 CONSONANTS = LETTERS.difference(SINGLE_VOWELS).union({'Ch', 'Sh', 'Th'})
-DIPHTONGS = {''.join(t).capitalize() for t in permutations(SINGLE_VOWELS, 2)}
+DIPHTONGS = set('Ai', 'Oi', 'Ow')
 VOWELS = SINGLE_VOWELS.union(DIPHTONGS)
 
 
