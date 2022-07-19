@@ -3,8 +3,6 @@ import random
 from datetime import datetime
 from pathlib import Path
 from string import ascii_uppercase
-from itertools import permutations
-import re
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
@@ -13,11 +11,11 @@ from PyQt5.QtWidgets import *
 LETTERS = set(ascii_uppercase.replace('Q', '').replace('C', ''))
 SINGLE_VOWELS = set('AEIOU')
 CONSONANTS = LETTERS.difference(SINGLE_VOWELS).union({'Ch', 'Sh', 'Th'})
-DIPHTONGS = set('Ai', 'Oi', 'Ow')
+DIPHTONGS = {'Ai', 'Oi', 'Ow'}
 VOWELS = SINGLE_VOWELS.union(DIPHTONGS)
 
 
-def word(vowels: list[str] = ['A', 'U', 'I', 'Ai', 'Au'], consonants: list[str]
+def word(vowels: list[str] = ['A', 'U', 'I', 'Ai', 'Ow'], consonants: list[str]
          = ['B', 'G', 'D'], n_syl: int | None = None) -> str:
     """Generate a word of one to three syllables, which are themselves composed
     of all possible consonant-vowel and single-vowel permutations.
@@ -123,43 +121,45 @@ class MainWindow(QMainWindow):
         log_name = 'babalu_' + now
         self.log_file = log_path/log_name
 
+        self.vow_active = []
+        self.con_active = []
+
+        select = QGridLayout()
+        layout.addLayout(select)
+
         select_lab = QLabel(' ')
         select_font = select_lab.font()
         select_font.setBold(True)
         select_font.setPixelSize(48)
 
-        select_row = QHBoxLayout()
-        layout.addLayout(select_row)
+        select_ncol = 11
 
-        vow_select = QGridLayout()
-        select_row.addLayout(vow_select)
-        vow_lab = QLabel('Vowels')
-        vow_lab.setFont(select_font)
-        vow_select.addWidget(vow_lab, 0, 0, 1, 6)
-        for v in sorted(VOWELS):
-            for col in range(len(SINGLE_VOWELS)):
-                fam = sorted([vow for vow in VOWELS
-                              if vow[0] == sorted(SINGLE_VOWELS)[col]])
-                for row, item in enumerate(fam):
-                    exec("vowCB_{} = QCheckBox('{}')"
-                         .format(item.lower(), item))
-                    exec("vow_select.addWidget(vowCB_{}, {}, {})"
-                         .format(item.lower(), row + 1, col))
+        # Vowels in one row
+        select_vlab = QLabel('Vowels/Diphthongs')
+        select_vlab.setFont(select_font)
+        select.addWidget(select_vlab, 0, 0, 1, select_ncol)
+        self.vow_cb = []
+        for n, v in enumerate(sorted(VOWELS)):
+            exec("cb_{} = QCheckBox('{}')".format(v, v))
+            exec("cb_{}.stateChanged.connect(self.update_vowels)".format(v))
+            exec("select.addWidget(cb_{}, 1, {})".format(v, n))
+            exec("self.vow_cb.append(cb_{})".format(v))
 
-        con_select = QGridLayout()
-        select_row.addLayout(con_select)
-        con_lab = QLabel('Consonants')
-        con_lab.setFont(select_font)
-        con_select.addWidget(con_lab, 0, 0, 1, 6)
-        con_rows = []
-        for i in range(0, len(CONSONANTS), 6):
-            con_rows.append(sorted(CONSONANTS)[i:i + 6])
-        for row in range(len(con_rows)):
-            for col, item in enumerate(con_rows[row]):
-                exec("conCB_{} = QCheckBox('{}')"
-                     .format(item.lower(), item))
-                exec("con_select.addWidget(conCB_{}, {}, {})"
-                     .format(item.lower(), row + 1, col))
+        # Consonants in two rows
+        select_clab = QLabel('Consonants')
+        select_clab.setFont(select_font)
+        select.addWidget(select_clab, 2, 0, 1, select_ncol)
+        self.con_cb = []
+        for n, c1 in enumerate(sorted(CONSONANTS)[:select_ncol]):
+            exec("cb_{} = QCheckBox('{}')".format(c1, c1))
+            exec("cb_{}.stateChanged.connect(self.update_cons)".format(c1))
+            exec("select.addWidget(cb_{}, 3, {})".format(c1, n))
+            exec("self.con_cb.append(cb_{})".format(c1))
+        for n, c2 in enumerate(sorted(CONSONANTS)[select_ncol:]):
+            exec("cb_{} = QCheckBox('{}')".format(c2, c2))
+            exec("cb_{}.stateChanged.connect(self.update_cons)".format(c2))
+            exec("select.addWidget(cb_{}, 4, {})".format(c2, n))
+            exec("self.con_cb.append(cb_{})".format(c2))
 
         titles = ['Abugida Babalu', 'Einstüzende Zikkuraten']
         self.label = QLabel(random.choice(titles))
@@ -186,6 +186,20 @@ class MainWindow(QMainWindow):
         self.label.setText(this_line)
         # with open(self.log_file, 'a') as f:
         #     f.write(this_line + '\n')
+
+    def update_vowels(self):
+        self.vow_active.clear()
+        for cb in self.vow_cb:
+            if cb.isChecked():
+                self.vow_active.append(cb.text())
+        print(self.vow_active)
+
+    def update_cons(self):
+        self.con_active.clear()
+        for cb in self.con_cb:
+            if cb.isChecked():
+                self.con_active.append(cb.text())
+        print(self.con_active)
 
 
 app = QApplication(sys.argv)
