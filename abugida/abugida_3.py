@@ -119,7 +119,7 @@ class MainWindow(QMainWindow):
             "Abugida 3: Abugida Babalu/Einstürzende Zikkuraten")
         self.showMaximized()
         layout = QVBoxLayout()
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setContentsMargins(50, 50, 50, 50)
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
@@ -133,39 +133,54 @@ class MainWindow(QMainWindow):
         self.log_file = log_path/log_name
 
         # LETTER SELECTION ================================
-        select_ncol = 11
+        select = QHBoxLayout()
+        layout.addLayout(select)
+
+        # random initial letters
         self.vow_active = random.sample(list(VOWELS), 3)
         self.con_active = random.sample(list(CONSONANTS), 3)
 
-        select_vgrid = QGridLayout()
-        self.vow_cb = []
-        for n, v in enumerate(sorted(VOWELS)):
-            exec("cb_{} = QCheckBox('{}')".format(v, v))
-            if v in self.vow_active:
-                exec("cb_{}.setCheckState(Qt.Checked)".format(v))
-            exec("cb_{}.stateChanged.connect(self.update_vowels)".format(v))
-            exec("select_vgrid.addWidget(cb_{}, 0, {})".format(v, n))
-            exec("self.vow_cb.append(cb_{})".format(v))
-        select_vow = QGroupBox('Vowels/Diphthongs')
-        select_vow.setLayout(select_vgrid)
-        layout.addWidget(select_vow)
+        # vowels
+        vgrid = QGridLayout()
+        vdim = (2, 4)
+        vmat = [(row, col) for row in range(vdim[0]) for col in range(vdim[1])]
+        vdict = dict(zip(sorted(VOWELS), vmat))
 
-        select_cgrid = QGridLayout()
+        self.vow_cb = []
+        for vow, loc in vdict.items():
+            exec("cb_{} = QCheckBox('{}')".format(vow, vow))
+            if vow in self.vow_active:
+                exec("cb_{}.setCheckState(Qt.Checked)".format(vow))
+            exec("cb_{}.stateChanged.connect(self.update_vowels)".format(vow))
+            exec("vgrid.addWidget(cb_{}, {}, {})"
+                 .format(vow, loc[0], loc[1]))
+            exec("self.vow_cb.append(cb_{})".format(vow))
+
+        vgroup = QGroupBox('Vowels/Diphthongs')
+        vgroup.setLayout(vgrid)
+        vgroup.setFixedSize(400, 300)
+        select.addWidget(vgroup, alignment=Qt.AlignTop)
+
+        # consonants
+        cgrid = QGridLayout()
+        cdim = (4, 6)
+        cmat = [(row, col) for row in range(cdim[0]) for col in range(cdim[1])]
+        cdict = dict(zip(sorted(CONSONANTS), cmat))
+
         self.con_cb = []
-        for n, c in enumerate(sorted(CONSONANTS)):
-            exec("cb_{} = QCheckBox('{}')".format(c, c))
-            if c in self.con_active:
-                exec("cb_{}.setCheckState(Qt.Checked)".format(c))
-            exec("cb_{}.stateChanged.connect(self.update_cons)".format(c))
-            exec("self.con_cb.append(cb_{})".format(c))
-            if n < select_ncol:
-                exec("select_cgrid.addWidget(cb_{}, 0, {})".format(c, n))
-            else:
-                exec("select_cgrid.addWidget(cb_{}, 1, {})"
-                     .format(c, n - select_ncol))
-        select_con = QGroupBox('Consonants/Digraphs')
-        select_con.setLayout(select_cgrid)
-        layout.addWidget(select_con)
+        for con, loc in cdict.items():
+            exec("cb_{} = QCheckBox('{}')".format(con, con))
+            if con in self.con_active:
+                exec("cb_{}.setCheckState(Qt.Checked)".format(con))
+            exec("cb_{}.stateChanged.connect(self.update_cons)".format(con))
+            exec("cgrid.addWidget(cb_{}, {}, {})"
+                 .format(con, loc[0], loc[1]))
+            exec("self.con_cb.append(cb_{})".format(con))
+
+        cgroup = QGroupBox('Consonants/Digraphs')
+        cgroup.setLayout(cgrid)
+        cgroup.setFixedSize(600, 400)
+        select.addWidget(cgroup, alignment=Qt.AlignTop)
 
         # LINE DISPLAY ============================================
         init_line = line(vowels=self.vow_active, consonants=self.con_active)
@@ -176,7 +191,7 @@ class MainWindow(QMainWindow):
         lab_font.setFamily('Helvetica Ultra Compressed')
         lab_font.setWordSpacing(40)
         self.label.setFont(lab_font)
-        self.label.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        self.label.setAlignment(Qt.AlignHCenter)
         layout.addWidget(self.label, alignment=Qt.AlignCenter)
 
         # GENERATE BUTTON ==========================================
