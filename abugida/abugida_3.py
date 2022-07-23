@@ -15,7 +15,7 @@ DIPHTONGS = {'Ai', 'Oi', 'Ow'}
 VOWELS = SINGLE_VOWELS.union(DIPHTONGS)
 
 
-def word(vowels: list[str] = ['A', 'U', 'I', 'Ai', 'Ow'], consonants: list[str]
+def word(vowels: list[str] = ['A', 'U', 'I'], consonants: list[str]
          = ['B', 'G', 'D'], n_syl: int | None = None) -> str:
     """Generate a word of one to three syllables, which are themselves composed
     of all possible consonant-vowel and single-vowel permutations.
@@ -24,7 +24,7 @@ def word(vowels: list[str] = ['A', 'U', 'I', 'Ai', 'Ow'], consonants: list[str]
         vowels (list[str], optional): A list of vowels used to make syllables.
             Accepts single vowels, including y, and all non-repetitive
             diphthongs of single vowels, (not 'aa', 'ee'). Defaults to
-            ['A', 'U', 'I', 'Ai', 'Au'].
+            ['A', 'U', 'I'].
         consonants (list[str], optional): A list of consonants used to make
             syllables. Accepts single consonants plus: 'ch', 'sh', 'th'.
             Defaults to  ['B', 'G', 'D'].
@@ -39,14 +39,14 @@ def word(vowels: list[str] = ['A', 'U', 'I', 'Ai', 'Ow'], consonants: list[str]
         in CV or V permutations, with syllables separated by hyphens.
     """
 
-    vowels = [v[:2] for v in vowels if len(v) > 2]
+    vowels = [v[:2] for v in vowels]
     vowels = [v.capitalize() for v in vowels]
     vowels = list(VOWELS.intersection(vowels))
     if not vowels:
-        vowels = ['A', 'U', 'I', 'Ai', 'Au']
+        vowels = ['A', 'U', 'I']
 
     for c in consonants:
-        if c.lower() not in CONSONANTS:
+        if c.capitalize() not in CONSONANTS:
             consonants.remove(c)
         c = c.capitalize()
     if not consonants:
@@ -79,7 +79,8 @@ def word(vowels: list[str] = ['A', 'U', 'I', 'Ai', 'Ow'], consonants: list[str]
     return text
 
 
-def line() -> str:
+def line(vowels: list[str] | None = None, consonants: list[str] | None = None,
+         n_syl: int | None = None) -> str:
     """Generate a line of 3-5 words, of up to 20 characters.
 
     Returns:
@@ -91,7 +92,7 @@ def line() -> str:
     text = ''
     i = 0
     while i < n_words:
-        text += word()
+        text += word(vowels=vowels, consonants=consonants, n_syl=n_syl)
         if len(text) < 20:
             text += ' '
         i += 1
@@ -106,8 +107,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle(
-            "Abugida 3: Abugida Babalu (Einstürzende Zikkuraten)")
-        self.setGeometry(50, 100, 1200, 700)
+            "Abugida 3: Abugida Babalu/Einstürzende Zikkuraten")
+        self.setGeometry(150, 100, 1600, 900)
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
         container = QWidget()
@@ -120,9 +121,6 @@ class MainWindow(QMainWindow):
         now = datetime.now().strftime('%Y-%m-%d-%H:%M')
         log_name = 'babalu_' + now
         self.log_file = log_path/log_name
-
-        self.vow_active = []
-        self.con_active = []
 
         select = QGridLayout()
         layout.addLayout(select)
@@ -150,19 +148,28 @@ class MainWindow(QMainWindow):
         select_clab.setFont(select_font)
         select.addWidget(select_clab, 2, 0, 1, select_ncol)
         self.con_cb = []
-        for n, c1 in enumerate(sorted(CONSONANTS)[:select_ncol]):
-            exec("cb_{} = QCheckBox('{}')".format(c1, c1))
-            exec("cb_{}.stateChanged.connect(self.update_cons)".format(c1))
-            exec("select.addWidget(cb_{}, 3, {})".format(c1, n))
-            exec("self.con_cb.append(cb_{})".format(c1))
-        for n, c2 in enumerate(sorted(CONSONANTS)[select_ncol:]):
-            exec("cb_{} = QCheckBox('{}')".format(c2, c2))
-            exec("cb_{}.stateChanged.connect(self.update_cons)".format(c2))
-            exec("select.addWidget(cb_{}, 4, {})".format(c2, n))
-            exec("self.con_cb.append(cb_{})".format(c2))
+        for n, c in enumerate(sorted(CONSONANTS)):
+            exec("cb_{} = QCheckBox('{}')".format(c, c))
+            exec("cb_{}.stateChanged.connect(self.update_cons)".format(c))
+            exec("self.con_cb.append(cb_{})".format(c))
+            if n < select_ncol:
+                exec("select.addWidget(cb_{}, 3, {})".format(c, n))
+            else:
+                exec("select.addWidget(cb_{}, 4, {})"
+                     .format(c, n - select_ncol))
 
-        titles = ['Abugida Babalu', 'Einstüzende Zikkuraten']
-        self.label = QLabel(random.choice(titles))
+        self.vow_active = random.sample(list(VOWELS), 3)
+        self.con_active = random.sample(list(CONSONANTS), 3)
+        print(self.vow_active, self.con_active)
+        for v in self.vow_active:
+            eval("cb_{}.setCheckState(Qt.Checked)".format(v))
+            print("cb_{}.setCheckState(Qt.Checked)".format(v))
+        for c in self.con_active:
+            exec("cb_{}.setCheckState(Qt.Checked)".format(c))
+            print("cb_{}.setCheckState(Qt.Checked)".format(c))
+
+        init_line = line(vowels=self.vow_active, consonants=self.con_active)
+        self.label = QLabel(init_line)
         lab_font = self.label.font()
         lab_font.setPixelSize(150)
         lab_font.setBold(True)
@@ -182,7 +189,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.btn, alignment=Qt.AlignCenter)
 
     def generate(self):
-        this_line = line()
+        this_line = line(vowels=self.vow_active, consonants=self.con_active)
         self.label.setText(this_line)
         # with open(self.log_file, 'a') as f:
         #     f.write(this_line + '\n')
@@ -192,14 +199,14 @@ class MainWindow(QMainWindow):
         for cb in self.vow_cb:
             if cb.isChecked():
                 self.vow_active.append(cb.text())
-        print(self.vow_active)
+        # print(self.vow_active)  # TEMP
 
     def update_cons(self):
         self.con_active.clear()
         for cb in self.con_cb:
             if cb.isChecked():
                 self.con_active.append(cb.text())
-        print(self.con_active)
+        # print(self.con_active)  # TEMP
 
 
 app = QApplication(sys.argv)
