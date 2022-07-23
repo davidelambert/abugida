@@ -133,38 +133,24 @@ class MainWindow(QMainWindow):
         self.log_file = log_path/log_name
 
         # LETTER SELECTION ================================
-        select = QGridLayout()
-        layout.addLayout(select)
-        select.setAlignment(Qt.AlignTop)
-
-        select_lab = QLabel(' ')
-        select_font = select_lab.font()
-        select_font.setBold(True)
-        select_font.setPixelSize(48)
-
         select_ncol = 11
-
-        # random initial letter slections
         self.vow_active = random.sample(list(VOWELS), 3)
         self.con_active = random.sample(list(CONSONANTS), 3)
 
-        # Vowels in one row
-        select_vlab = QLabel('Vowels/Diphthongs')
-        select_vlab.setFont(select_font)
-        select.addWidget(select_vlab, 0, 0, 1, select_ncol)
+        select_vgrid = QGridLayout()
         self.vow_cb = []
         for n, v in enumerate(sorted(VOWELS)):
             exec("cb_{} = QCheckBox('{}')".format(v, v))
             if v in self.vow_active:
                 exec("cb_{}.setCheckState(Qt.Checked)".format(v))
             exec("cb_{}.stateChanged.connect(self.update_vowels)".format(v))
-            exec("select.addWidget(cb_{}, 1, {})".format(v, n))
+            exec("select_vgrid.addWidget(cb_{}, 0, {})".format(v, n))
             exec("self.vow_cb.append(cb_{})".format(v))
+        select_vow = QGroupBox('Vowels/Diphthongs')
+        select_vow.setLayout(select_vgrid)
+        layout.addWidget(select_vow)
 
-        # Consonants in two rows
-        select_clab = QLabel('Consonants')
-        select_clab.setFont(select_font)
-        select.addWidget(select_clab, 2, 0, 1, select_ncol)
+        select_cgrid = QGridLayout()
         self.con_cb = []
         for n, c in enumerate(sorted(CONSONANTS)):
             exec("cb_{} = QCheckBox('{}')".format(c, c))
@@ -173,10 +159,13 @@ class MainWindow(QMainWindow):
             exec("cb_{}.stateChanged.connect(self.update_cons)".format(c))
             exec("self.con_cb.append(cb_{})".format(c))
             if n < select_ncol:
-                exec("select.addWidget(cb_{}, 3, {})".format(c, n))
+                exec("select_cgrid.addWidget(cb_{}, 0, {})".format(c, n))
             else:
-                exec("select.addWidget(cb_{}, 4, {})"
+                exec("select_cgrid.addWidget(cb_{}, 1, {})"
                      .format(c, n - select_ncol))
+        select_con = QGroupBox('Consonants/Digraphs')
+        select_con.setLayout(select_cgrid)
+        layout.addWidget(select_con)
 
         # LINE DISPLAY ============================================
         init_line = line(vowels=self.vow_active, consonants=self.con_active)
