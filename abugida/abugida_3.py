@@ -115,6 +115,7 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
+        # LOG ==========================================
         log_path = Path('./abugida_logs')
         if not log_path.exists():
             log_path.mkdir()
@@ -122,6 +123,7 @@ class MainWindow(QMainWindow):
         log_name = 'babalu_' + now
         self.log_file = log_path/log_name
 
+        # LETTER SELECTION ================================
         select = QGridLayout()
         layout.addLayout(select)
 
@@ -132,6 +134,10 @@ class MainWindow(QMainWindow):
 
         select_ncol = 11
 
+        # random initial letter slections
+        self.vow_active = random.sample(list(VOWELS), 3)
+        self.con_active = random.sample(list(CONSONANTS), 3)
+
         # Vowels in one row
         select_vlab = QLabel('Vowels/Diphthongs')
         select_vlab.setFont(select_font)
@@ -139,6 +145,8 @@ class MainWindow(QMainWindow):
         self.vow_cb = []
         for n, v in enumerate(sorted(VOWELS)):
             exec("cb_{} = QCheckBox('{}')".format(v, v))
+            if v in self.vow_active:
+                exec("cb_{}.setCheckState(Qt.Checked)".format(v))
             exec("cb_{}.stateChanged.connect(self.update_vowels)".format(v))
             exec("select.addWidget(cb_{}, 1, {})".format(v, n))
             exec("self.vow_cb.append(cb_{})".format(v))
@@ -150,6 +158,8 @@ class MainWindow(QMainWindow):
         self.con_cb = []
         for n, c in enumerate(sorted(CONSONANTS)):
             exec("cb_{} = QCheckBox('{}')".format(c, c))
+            if c in self.con_active:
+                exec("cb_{}.setCheckState(Qt.Checked)".format(c))
             exec("cb_{}.stateChanged.connect(self.update_cons)".format(c))
             exec("self.con_cb.append(cb_{})".format(c))
             if n < select_ncol:
@@ -158,16 +168,7 @@ class MainWindow(QMainWindow):
                 exec("select.addWidget(cb_{}, 4, {})"
                      .format(c, n - select_ncol))
 
-        self.vow_active = random.sample(list(VOWELS), 3)
-        self.con_active = random.sample(list(CONSONANTS), 3)
-        print(self.vow_active, self.con_active)
-        for v in self.vow_active:
-            eval("cb_{}.setCheckState(Qt.Checked)".format(v))
-            print("cb_{}.setCheckState(Qt.Checked)".format(v))
-        for c in self.con_active:
-            exec("cb_{}.setCheckState(Qt.Checked)".format(c))
-            print("cb_{}.setCheckState(Qt.Checked)".format(c))
-
+        # LINE DISPLAY ============================================
         init_line = line(vowels=self.vow_active, consonants=self.con_active)
         self.label = QLabel(init_line)
         lab_font = self.label.font()
@@ -179,6 +180,7 @@ class MainWindow(QMainWindow):
         self.label.setFixedWidth(1150)
         layout.addWidget(self.label, alignment=Qt.AlignCenter)
 
+        # GENERATE BUTTON ==========================================
         self.btn = QPushButton(u'\u21BB')
         self.btn.clicked.connect(self.generate)
         btn_font = self.btn.font()
@@ -191,22 +193,18 @@ class MainWindow(QMainWindow):
     def generate(self):
         this_line = line(vowels=self.vow_active, consonants=self.con_active)
         self.label.setText(this_line)
-        # with open(self.log_file, 'a') as f:
-        #     f.write(this_line + '\n')
 
     def update_vowels(self):
         self.vow_active.clear()
         for cb in self.vow_cb:
             if cb.isChecked():
                 self.vow_active.append(cb.text())
-        # print(self.vow_active)  # TEMP
 
     def update_cons(self):
         self.con_active.clear()
         for cb in self.con_cb:
             if cb.isChecked():
                 self.con_active.append(cb.text())
-        # print(self.con_active)  # TEMP
 
 
 app = QApplication(sys.argv)
