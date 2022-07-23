@@ -7,12 +7,17 @@ from string import ascii_uppercase
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
+LETTERS = set(ascii_uppercase)
+drop_cons = ['Q', 'C', 'X']
+for c in drop_cons:
+    LETTERS.remove(c)
 
-LETTERS = set(ascii_uppercase.replace('Q', '').replace('C', ''))
 SINGLE_VOWELS = set('AEIOU')
-CONSONANTS = LETTERS.difference(SINGLE_VOWELS).union({'Ch', 'Sh', 'Th'})
 DIPHTONGS = {'Ai', 'Oi', 'Ow'}
 VOWELS = SINGLE_VOWELS.union(DIPHTONGS)
+
+DIGRAPHS = {'Ch', 'Sh', 'Th', "Zh"}
+CONSONANTS = LETTERS.difference(SINGLE_VOWELS).union(DIGRAPHS)
 
 
 def word(vowels: list[str] = ['A', 'U', 'I'], consonants: list[str]
@@ -39,6 +44,8 @@ def word(vowels: list[str] = ['A', 'U', 'I'], consonants: list[str]
         in CV or V permutations, with syllables separated by hyphens.
     """
 
+    max_syl = 4
+
     vowels = [v[:2] for v in vowels]
     vowels = [v.capitalize() for v in vowels]
     vowels = list(VOWELS.intersection(vowels))
@@ -56,49 +63,51 @@ def word(vowels: list[str] = ['A', 'U', 'I'], consonants: list[str]
     all_syl = cv_syl + vowels
 
     if n_syl is None:
-        n_syl = random.randint(1, 3)
+        n_syl = random.randint(1, max_syl)
 
     if n_syl == 0:
-        n_syl = random.randint(1, 3)
+        n_syl = random.randint(1, max_syl)
 
     if n_syl < 0:
         n_syl = abs(n_syl)
 
-    if n_syl > 3:
-        n_syl = n_syl % 3
+    if n_syl > max_syl:
+        n_syl = n_syl % max_syl
 
     text = ''
     i = 0
-    while i < n_syl:
-        if text == '' or text[-1].upper() not in VOWELS:
-            text += random.choice(all_syl)
-        else:
-            text += random.choice(cv_syl)
+    while i < n_syl - 1:  # all but last syllable
+        text += random.choice(all_syl)
+        text += '-'
         i += 1
+    text += random.choice(all_syl)  # last syllable: no hyphen
 
     return text
 
 
 def line(vowels: list[str] | None = None, consonants: list[str] | None = None,
          n_syl: int | None = None) -> str:
-    """Generate a line of 3-5 words, of up to 20 characters.
+    """Generate a line of 3-5 words, of up to 30 characters.
 
     Returns:
-        str: A line of words up to 20 characters long, contructed from
+        str: A line of words up to 30 characters long, contructed from
         available CV and/or V syllables.
     """
+
+    max_length = 30
+
     n_words = random.randint(3, 5)
 
     text = ''
     i = 0
     while i < n_words:
         text += word(vowels=vowels, consonants=consonants, n_syl=n_syl)
-        if len(text) < 20:
+        if len(text) < max_length:
             text += ' '
         i += 1
 
-    if len(text) > 20:
-        text = text[:text.rfind(' ')]
+    while len(text) > max_length:
+        text = text[:text.rfind('-')]
 
     return text
 
@@ -108,7 +117,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle(
             "Abugida 3: Abugida Babalu/Einstürzende Zikkuraten")
-        self.setGeometry(150, 100, 1600, 900)
+        self.showMaximized()
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
         container = QWidget()
@@ -126,6 +135,7 @@ class MainWindow(QMainWindow):
         # LETTER SELECTION ================================
         select = QGridLayout()
         layout.addLayout(select)
+        select.setAlignment(Qt.AlignTop)
 
         select_lab = QLabel(' ')
         select_font = select_lab.font()
@@ -172,23 +182,23 @@ class MainWindow(QMainWindow):
         init_line = line(vowels=self.vow_active, consonants=self.con_active)
         self.label = QLabel(init_line)
         lab_font = self.label.font()
-        lab_font.setPixelSize(150)
+        lab_font.setPixelSize(200)
         lab_font.setBold(True)
         lab_font.setFamily('Helvetica Ultra Compressed')
+        lab_font.setWordSpacing(40)
         self.label.setFont(lab_font)
-        self.label.setAlignment(Qt.AlignCenter)
-        self.label.setFixedWidth(1150)
+        self.label.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         layout.addWidget(self.label, alignment=Qt.AlignCenter)
 
         # GENERATE BUTTON ==========================================
         self.btn = QPushButton(u'\u21BB')
         self.btn.clicked.connect(self.generate)
         btn_font = self.btn.font()
-        btn_font.setPixelSize(120)
+        btn_font.setPixelSize(60)
         btn_font.setBold(True)
         self.btn.setFont(btn_font)
-        self.btn.setFixedWidth(150)
-        layout.addWidget(self.btn, alignment=Qt.AlignCenter)
+        self.btn.setFixedWidth(80)
+        layout.addWidget(self.btn, alignment=Qt.AlignHCenter)
 
     def generate(self):
         this_line = line(vowels=self.vow_active, consonants=self.con_active)
