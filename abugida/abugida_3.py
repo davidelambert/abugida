@@ -138,53 +138,88 @@ class MainWindow(QMainWindow):
 
         # LETTER SELECTION ================================
         select = QHBoxLayout()
+        select.setContentsMargins(50, 0, 50, 0)
         layout.addLayout(select)
 
         # random initial letters
         self.vow_active = random.sample(list(VOWELS), 3)
         self.con_active = random.sample(list(CONSONANTS), 3)
 
-        # vowels
+        # VOWELS =============================================
         vgrid = QGridLayout()
+        vgrid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        vgrid.setContentsMargins(20, 20, 20, 20)
+        vgrid.setSpacing(50)
+
         vdim = (2, 4)
         vmat = [(row, col) for row in range(vdim[0]) for col in range(vdim[1])]
         vdict = dict(zip(sorted(VOWELS), vmat))
 
         self.vow_cb = []
         for vow, loc in vdict.items():
-            exec("cb_{} = QCheckBox('{}')".format(vow, vow))
+            exec("self.cb_{} = QCheckBox('{}')".format(vow, vow))
             if vow in self.vow_active:
-                exec("cb_{}.setCheckState(Qt.Checked)".format(vow))
-            exec("cb_{}.stateChanged.connect(self.update_vowels)".format(vow))
-            exec("vgrid.addWidget(cb_{}, {}, {})"
+                exec("self.cb_{}.setCheckState(Qt.Checked)".format(vow))
+            exec("self.cb_{}.stateChanged.connect(self.update_vowels)".format(vow))
+            exec("vgrid.addWidget(self.cb_{}, {}, {})"
                  .format(vow, loc[0], loc[1]))
-            exec("self.vow_cb.append(cb_{})".format(vow))
+            exec("self.vow_cb.append(self.cb_{})".format(vow))
 
         vgroup = QGroupBox('Vowels/Diphthongs')
         vgroup.setLayout(vgrid)
-        vgroup.setFixedSize(400, 300)
+        vgroup.setFixedSize(400, 400)
         select.addWidget(vgroup, alignment=Qt.AlignTop)
 
-        # consonants
+        # CONSONANTS ===============================================
         cgrid = QGridLayout()
+        cgrid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        cgrid.setContentsMargins(20, 20, 20, 20)
+        cgrid.setSpacing(50)
+
         cdim = (4, 6)
         cmat = [(row, col) for row in range(cdim[0]) for col in range(cdim[1])]
         cdict = dict(zip(sorted(CONSONANTS), cmat))
 
         self.con_cb = []
         for con, loc in cdict.items():
-            exec("cb_{} = QCheckBox('{}')".format(con, con))
+            exec("self.cb_{} = QCheckBox('{}')".format(con, con))
             if con in self.con_active:
-                exec("cb_{}.setCheckState(Qt.Checked)".format(con))
-            exec("cb_{}.stateChanged.connect(self.update_cons)".format(con))
-            exec("cgrid.addWidget(cb_{}, {}, {})"
+                exec("self.cb_{}.setCheckState(Qt.Checked)".format(con))
+            exec("self.cb_{}.stateChanged.connect(self.update_cons)".format(con))
+            exec("cgrid.addWidget(self.cb_{}, {}, {})"
                  .format(con, loc[0], loc[1]))
-            exec("self.con_cb.append(cb_{})".format(con))
+            exec("self.con_cb.append(self.cb_{})".format(con))
 
         cgroup = QGroupBox('Consonants/Digraphs')
         cgroup.setLayout(cgrid)
         cgroup.setFixedSize(600, 400)
         select.addWidget(cgroup, alignment=Qt.AlignTop)
+
+        # CONTROLS ============================================
+        btn_grid = QVBoxLayout()
+        btn_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        btn_grid.setContentsMargins(20, 20, 20, 20)
+        btn_grid.setSpacing(25)
+
+        btn_all = QPushButton('Everything')
+        btn_all.clicked.connect(self.select_all)
+        btn_all.setFixedWidth(150)
+        btn_grid.addWidget(btn_all)
+
+        btn_none = QPushButton('Nothing')
+        btn_none.clicked.connect(self.select_none)
+        btn_none.setFixedWidth(150)
+        btn_grid.addWidget(btn_none)
+
+        btn_random = QPushButton('3/3 Random')
+        btn_random.clicked.connect(self.select_random)
+        btn_random.setFixedWidth(150)
+        btn_grid.addWidget(btn_random)
+
+        btn_group = QGroupBox('Controls')
+        btn_group.setLayout(btn_grid)
+        btn_group.setFixedSize(200, 400)
+        select.addWidget(btn_group, alignment=Qt.AlignTop)
 
         # LINE DISPLAY ============================================
         init_line = line(vowels=self.vow_active, consonants=self.con_active)
@@ -227,6 +262,27 @@ class MainWindow(QMainWindow):
         for cb in self.con_cb:
             if cb.isChecked():
                 self.con_active.append(cb.text())
+
+    def select_all(self):
+        for vow in VOWELS:
+            exec("self.cb_{}.setCheckState(Qt.Checked)".format(vow))
+        for con in CONSONANTS:
+            exec("self.cb_{}.setCheckState(Qt.Checked)".format(con))
+
+    def select_none(self):
+        for vow in VOWELS:
+            exec("self.cb_{}.setCheckState(Qt.Unchecked)".format(vow))
+        for con in CONSONANTS:
+            exec("self.cb_{}.setCheckState(Qt.Unchecked)".format(con))
+
+    def select_random(self):
+        self.select_none()
+        vsamp = random.sample(list(VOWELS), 3)
+        for vow in vsamp:
+            exec("self.cb_{}.setCheckState(Qt.Checked)".format(vow))
+        csamp = random.sample(list(CONSONANTS), 3)
+        for con in csamp:
+            exec("self.cb_{}.setCheckState(Qt.Checked)".format(con))
 
 
 app = QApplication(sys.argv)
