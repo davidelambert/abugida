@@ -15,7 +15,7 @@ for c in drop_cons:
     LETTERS.remove(c)
 
 SINGLE_VOWELS = set('AEIOU')
-DIPHTONGS = {'Ai', 'Oi', 'Ow'}
+DIPHTONGS = {'Ai', 'Au', 'Oi', }
 VOWELS = SINGLE_VOWELS.union(DIPHTONGS)
 
 DIGRAPHS = {'Ch', 'Sh', 'Th', "Zh"}
