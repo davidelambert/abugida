@@ -54,7 +54,7 @@ def line(n_syl: None | str = None) -> str:
 
     w1_syl = random.randint(1, 3)
     w1 = word(w1_syl)
-    text = text + w1 + '  '
+    text = text + w1 + ' '
     syl_remaining -= w1_syl
 
     if syl_remaining > 3:
@@ -63,13 +63,13 @@ def line(n_syl: None | str = None) -> str:
         w2_syl = random.randint(1, syl_remaining)
 
     w2 = word(w2_syl)
-    text = text + w2 + '  '
+    text = text + w2 + ' '
     syl_remaining -= w2_syl
 
     if syl_remaining >= 3:
         w3_syl = random.randint(1, 3)
         w3 = word(w3_syl)
-        text = text + w3 + '  '
+        text = text + w3 + ' '
         syl_remaining -= w3_syl
     elif syl_remaining != 0:
         w3 = word(syl_remaining)
@@ -100,49 +100,52 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Abugida 1: Abugida Haiku")
-        self.setGeometry(50, 100, 1200, 700)
+        self.showMaximized()
         layout = QVBoxLayout()
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setAlignment(Qt.AlignCenter)
-        layout.addStretch()
+        layout.setContentsMargins(50, 50, 50, 50)
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        log_path = Path('./abugida_logs')
+        # LOG ==========================================
+        log_path = HERE/'abugida_logs'
         if not log_path.exists():
             log_path.mkdir()
         now = datetime.now().strftime('%Y-%m-%d-%H:%M')
-        log_name = 'abugida_haiku_' + now
+        log_name = 'haiku_' + now
+        if Path(log_path/log_name).exists():
+            log_name += datetime.now().strftime(':%S')
         self.log_file = log_path/log_name
 
-        self.label = QLabel('\n\n ')
+        # LINE DISPLAY ============================================
+        init_haiku = Haiku()
+        with open(self.log_file, 'a') as f:
+            f.write(init_haiku.text.replace('-', '') + '\n\n')
+        self.label = QLabel(init_haiku.text)
         lab_font = self.label.font()
-        lab_font.setPixelSize(150)
+        lab_font.setPixelSize(220)
         lab_font.setBold(True)
         lab_font.setFamily('Helvetica Ultra Compressed')
+        lab_font.setWordSpacing(40)
         self.label.setFont(lab_font)
         self.label.setAlignment(Qt.AlignCenter)
-        self.label.setFixedWidth(1150)
-        layout.addWidget(self.label, alignment=Qt.AlignCenter)
+        layout.addWidget(self.label, alignment=Qt.AlignHCenter)
 
-        btn_row = QHBoxLayout()
-        layout.addLayout(btn_row)
-
+        # GENERATE BUTTON ==========================================
         self.btn = QPushButton(u'\u21BB')
         self.btn.clicked.connect(self.generate)
         btn_font = self.btn.font()
-        btn_font.setPixelSize(120)
+        btn_font.setPixelSize(60)
         btn_font.setBold(True)
         self.btn.setFont(btn_font)
-        self.btn.setFixedWidth(150)
-        btn_row.addWidget(self.btn)
+        self.btn.setFixedWidth(80)
+        layout.addWidget(self.btn, alignment=Qt.AlignHCenter)
 
     def generate(self):
         h = Haiku()
         self.label.setText(h.text)
         with open(self.log_file, 'a') as f:
-            f.write(h.text + '\n\n')
+            f.write(h.text.replace('-', '') + '\n\n')
 
 
 app = QApplication(sys.argv)
