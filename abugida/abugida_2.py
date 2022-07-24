@@ -8,27 +8,30 @@ from PyQt5.QtWidgets import *
 
 
 HERE = Path(__file__).parent.resolve()
+
 VOWELS = ('A', 'U', 'I', 'Ai', 'Au')
 CONSONANTS = ('B', 'G', 'D')
 SYLLABLES = [c + v.lower() for c in CONSONANTS for v in VOWELS] + list(VOWELS)
 
+MAX_SYL = 4
+
 
 def word(n_syl: None | int = None) -> str:
     if n_syl is None:
-        n_syl = random.randint(1, 3)
+        n_syl = random.randint(1, MAX_SYL)
 
     if n_syl == 0:
-        n_syl = random.randint(1, 3)
+        n_syl = random.randint(1, MAX_SYL)
 
     if n_syl < 0:
         n_syl = abs(n_syl)
 
-    if n_syl > 3:
-        n_syl = n_syl % 3
+    if n_syl > MAX_SYL:
+        n_syl = n_syl % MAX_SYL
 
     text = ''
     i = 0
-    while i < n_syl - 1:
+    while i < n_syl - 1:  # all but last syllable
         text = text + random.choice(SYLLABLES) + '-'
         i += 1
     text = text + random.choice(SYLLABLES)  # no hyphen after last syllable
@@ -36,52 +39,20 @@ def word(n_syl: None | int = None) -> str:
     return text
 
 
-def line(n_syl: None | int = None) -> str:
-    if n_syl is None:
-        n_syl = random.choice([4, 7])
-
-    if n_syl == 0:
-        n_syl = random.choice([4, 7])
-
-    if n_syl < 0:
-        n_syl = abs(n_syl)
-
-    if n_syl > 8:
-        n_syl = n_syl % 7
-
+def line() -> str:
+    max_length = 30
+    n_words = random.randint(3, 5)
     text = ''
-    syl_remaining = n_syl
 
-    w1_syl = random.randint(1, 3)
-    text = text + word(w1_syl) + '  '
-    syl_remaining -= w1_syl
+    i = 0
+    while i < n_words:
+        text += word()
+        if len(text) < max_length:
+            text += ' '
+        i += 1
 
-    if syl_remaining > 3:
-        w2_syl = random.randint(1, 3)
-        text = text + word(w2_syl) + '  '
-        syl_remaining -= w2_syl
-    elif syl_remaining != 0:
-        w2_syl = random.randint(1, syl_remaining)
-        text = text + word(w2_syl) + '  '
-        syl_remaining -= w2_syl
-
-    if syl_remaining >= 3:
-        w3_syl = random.randint(1, 3)
-        w3 = word(w3_syl)
-        text = text + w3 + '  '
-        syl_remaining -= w3_syl
-    elif syl_remaining != 0:
-        w3 = word(syl_remaining)
-        text = text + w3
-        syl_remaining -= syl_remaining
-
-    if syl_remaining != 0:
-        w4 = word(syl_remaining)
-        text = text + w4
-        syl_remaining -= syl_remaining
-
-    if syl_remaining != 0:
-        raise Exception
+    while len(text) > max_length:
+        text = text[:text.rfind('-')]
 
     return text
 
@@ -90,47 +61,52 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Abugida 2: Vogon Poetry")
-        self.setGeometry(50, 100, 1200, 700)
+        self.showMaximized()
         layout = QVBoxLayout()
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setContentsMargins(50, 50, 50, 50)
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        log_path = Path('./abugida_logs')
+        # LOG =================================
+        log_path = HERE/'abugida_logs'
         if not log_path.exists():
             log_path.mkdir()
         now = datetime.now().strftime('%Y-%m-%d-%H:%M')
-        log_name = 'vogon_poetry_' + now
+        log_name = 'vogon_' + now
+        if Path(log_path/log_name).exists():
+            log_name += datetime.now().strftime(':%S')
         self.log_file = log_path/log_name
 
-        self.label = QLabel('')
+        # LINE DISPLAY ===================
+        init_line = line()
+        with open(self.log_file, 'a') as f:
+            f.write(init_line.replace('-', '') + '\n')
+        self.label = QLabel(init_line)
         lab_font = self.label.font()
-        lab_font.setPixelSize(180)
+        lab_font.setPixelSize(200)
         lab_font.setBold(True)
         lab_font.setFamily('Helvetica Ultra Compressed')
+        lab_font.setWordSpacing(40)
         self.label.setFont(lab_font)
         self.label.setAlignment(Qt.AlignCenter)
-        self.label.setFixedWidth(1150)
         layout.addWidget(self.label, alignment=Qt.AlignCenter)
 
-        btn_row = QHBoxLayout()
-        layout.addLayout(btn_row)
-
+        # GENERATE BUTTON =================
         self.btn = QPushButton(u'\u21BB')
         self.btn.clicked.connect(self.generate)
         btn_font = self.btn.font()
-        btn_font.setPixelSize(120)
+        btn_font.setPixelSize(60)
         btn_font.setBold(True)
         self.btn.setFont(btn_font)
-        self.btn.setFixedWidth(150)
-        btn_row.addWidget(self.btn)
+        self.btn.setFixedWidth(80)
+        layout.addWidget(self.btn, alignment=Qt.AlignHCenter)
 
     def generate(self):
         this_line = line()
         self.label.setText(this_line)
         with open(self.log_file, 'a') as f:
-            f.write(this_line + '\n')
+            f.write(this_line.replace('-', '') + '\n')
 
 
 app = QApplication(sys.argv)
