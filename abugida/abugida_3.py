@@ -126,7 +126,10 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        # LOG ==========================================
+        BSIZE = 80
+
+        # LOG SETUP =================================
+        self.log_on = False
         log_path = HERE/'abugida_logs'
         if not log_path.exists():
             log_path.mkdir()
@@ -202,33 +205,31 @@ class MainWindow(QMainWindow):
 
         btn_all = QPushButton(u'\u221E')  # infinity ∞
         btn_font = btn_all.font()
-        btn_font.setPixelSize(60)
+        btn_font.setPixelSize(40)
         btn_all.setFont(btn_font)
         btn_all.clicked.connect(self.select_all)
-        btn_all.setFixedSize(80, 80)
+        btn_all.setFixedSize(BSIZE, BSIZE)
         btn_grid.addWidget(btn_all)
 
         btn_none = QPushButton(u'\u2300')  # diameter ⌀, for null
         btn_none.setFont(btn_font)
         btn_none.clicked.connect(self.select_none)
-        btn_none.setFixedSize(80, 80)
+        btn_none.setFixedSize(BSIZE, BSIZE)
         btn_grid.addWidget(btn_none)
 
         btn_random = QPushButton(u'\u292E')  # ne arrow crossing se arrow ⤮
         btn_random.setFont(btn_font)
         btn_random.clicked.connect(self.select_random)
-        btn_random.setFixedSize(80, 80)
+        btn_random.setFixedSize(BSIZE, BSIZE)
         btn_grid.addWidget(btn_random)
 
-        btn_group = QGroupBox('Controls')
-        btn_group.setLayout(btn_grid)
-        btn_group.setFixedSize(200, 400)
-        select.addWidget(btn_group, alignment=Qt.AlignTop)
+        btn_ctrlgrp = QGroupBox('Controls')
+        btn_ctrlgrp.setLayout(btn_grid)
+        btn_ctrlgrp.setFixedSize(200, 400)
+        select.addWidget(btn_ctrlgrp, alignment=Qt.AlignTop)
 
         # LINE DISPLAY ============================================
         init_line = line(vowels=self.vow_active, consonants=self.con_active)
-        with open(self.log_file, 'a') as f:
-            f.write(init_line.replace('-', '') + '\n')
         self.label = QLabel(init_line)
         lab_font = self.label.font()
         lab_font.setPixelSize(200)
@@ -239,18 +240,34 @@ class MainWindow(QMainWindow):
         self.label.setAlignment(Qt.AlignHCenter)
         layout.addWidget(self.label, alignment=Qt.AlignCenter)
 
-        # GENERATE BUTTON ==========================================
+        # GENERATE & LOG BUTTONS ================================
+        btn_maingrp = QHBoxLayout()
+        btn_maingrp.setAlignment(Qt.AlignHCenter)
+        btn_maingrp.setSpacing(50)
+        layout.addLayout(btn_maingrp)
+
         self.btn_generate = QPushButton(u'\u21BB')  # cwise open circle arrow ↻
         self.btn_generate.clicked.connect(self.generate)
         self.btn_generate.setFont(btn_font)
-        self.btn_generate.setFixedSize(80, 80)
-        layout.addWidget(self.btn_generate, alignment=Qt.AlignHCenter)
+        self.btn_generate.setFixedSize(BSIZE, BSIZE)
+        btn_maingrp.addWidget(self.btn_generate)
+
+        self.btn_log = QPushButton(u'\u33D2')  # log symbol ㏒
+        self.btn_log.setCheckable(True)
+        self.btn_log.clicked.connect(self.toggle_log)
+        self.btn_log.setFont(btn_font)
+        self.btn_log.setFixedSize(BSIZE, BSIZE)
+        btn_maingrp.addWidget(self.btn_log)
 
     def generate(self):
         this_line = line(vowels=self.vow_active, consonants=self.con_active)
         self.label.setText(this_line)
-        with open(self.log_file, 'a') as f:
-            f.write(this_line.replace('-', '') + '\n')
+        if self.log_on:
+            with open(self.log_file, 'a') as f:
+                f.write(this_line.replace('-', '') + '\n')
+
+    def toggle_log(self, checked):
+        self.log_on = checked
 
     def update_vowels(self):
         self.vow_active.clear()

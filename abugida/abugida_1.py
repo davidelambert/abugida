@@ -107,7 +107,10 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
+        BSIZE = 80
+
         # LOG ==========================================
+        self.log_on = False
         log_path = HERE/'abugida_logs'
         if not log_path.exists():
             log_path.mkdir()
@@ -119,8 +122,6 @@ class MainWindow(QMainWindow):
 
         # LINE DISPLAY ============================================
         init_haiku = Haiku()
-        with open(self.log_file, 'a') as f:
-            f.write(init_haiku.text.replace('-', '') + '\n\n')
         self.label = QLabel(init_haiku.text)
         lab_font = self.label.font()
         lab_font.setPixelSize(220)
@@ -131,21 +132,36 @@ class MainWindow(QMainWindow):
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label, alignment=Qt.AlignHCenter)
 
-        # GENERATE BUTTON ==========================================
-        self.btn = QPushButton(u'\u21BB')
-        self.btn.clicked.connect(self.generate)
-        btn_font = self.btn.font()
-        btn_font.setPixelSize(60)
-        btn_font.setBold(True)
-        self.btn.setFont(btn_font)
-        self.btn.setFixedWidth(80)
-        layout.addWidget(self.btn, alignment=Qt.AlignHCenter)
+        # GENERATE & LOG BUTTONS ================================
+        btn_maingrp = QHBoxLayout()
+        btn_maingrp.setAlignment(Qt.AlignHCenter)
+        btn_maingrp.setSpacing(50)
+        layout.addLayout(btn_maingrp)
+
+        self.btn_generate = QPushButton(u'\u21BB')  # cwise open circle arrow ↻
+        self.btn_generate.clicked.connect(self.generate)
+        btn_font = self.btn_generate.font()
+        btn_font.setPixelSize(40)
+        self.btn_generate.setFont(btn_font)
+        self.btn_generate.setFixedSize(BSIZE, BSIZE)
+        btn_maingrp.addWidget(self.btn_generate)
+
+        self.btn_log = QPushButton(u'\u33D2')
+        self.btn_log.setCheckable(True)
+        self.btn_log.clicked.connect(self.toggle_log)
+        self.btn_log.setFont(btn_font)
+        self.btn_log.setFixedSize(BSIZE, BSIZE)
+        btn_maingrp.addWidget(self.btn_log)
 
     def generate(self):
         h = Haiku()
         self.label.setText(h.text)
-        with open(self.log_file, 'a') as f:
-            f.write(h.text.replace('-', '') + '\n\n')
+        if self.log_on:
+            with open(self.log_file, 'a') as f:
+                f.write(h.text.replace('-', '') + '\n\n')
+
+    def toggle_log(self, checked):
+        self.log_on = checked
 
 
 app = QApplication(sys.argv)
