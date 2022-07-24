@@ -7,6 +7,8 @@ from string import ascii_uppercase
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
+HERE = Path(__file__).parent.resolve()
+
 LETTERS = set(ascii_uppercase)
 drop_cons = ['Q', 'C', 'X']
 for c in drop_cons:
@@ -125,11 +127,13 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
         # LOG ==========================================
-        log_path = Path('./abugida_logs')
+        log_path = HERE/'abugida_logs'
         if not log_path.exists():
             log_path.mkdir()
         now = datetime.now().strftime('%Y-%m-%d-%H:%M')
         log_name = 'babalu_' + now
+        if Path(log_path/log_name).exists():
+            log_name += datetime.now().strftime(':%S')
         self.log_file = log_path/log_name
 
         # LETTER SELECTION ================================
@@ -184,6 +188,8 @@ class MainWindow(QMainWindow):
 
         # LINE DISPLAY ============================================
         init_line = line(vowels=self.vow_active, consonants=self.con_active)
+        with open(self.log_file, 'a') as f:
+            f.write(init_line.replace('-', '') + '\n')
         self.label = QLabel(init_line)
         lab_font = self.label.font()
         lab_font.setPixelSize(200)
@@ -207,6 +213,8 @@ class MainWindow(QMainWindow):
     def generate(self):
         this_line = line(vowels=self.vow_active, consonants=self.con_active)
         self.label.setText(this_line)
+        with open(self.log_file, 'a') as f:
+            f.write(this_line.replace('-', '') + '\n')
 
     def update_vowels(self):
         self.vow_active.clear()
