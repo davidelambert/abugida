@@ -141,7 +141,6 @@ class MainWindow(QMainWindow):
         select.setContentsMargins(50, 0, 50, 0)
         layout.addLayout(select)
 
-        # random initial letters
         self.vow_active = random.sample(list(VOWELS), 3)
         self.con_active = random.sample(list(CONSONANTS), 3)
 
@@ -201,19 +200,24 @@ class MainWindow(QMainWindow):
         btn_grid.setContentsMargins(20, 20, 20, 20)
         btn_grid.setSpacing(25)
 
-        btn_all = QPushButton('Everything')
+        btn_all = QPushButton(u'\u221E')  # infinity ∞
+        btn_font = btn_all.font()
+        btn_font.setPixelSize(60)
+        btn_all.setFont(btn_font)
         btn_all.clicked.connect(self.select_all)
-        btn_all.setFixedWidth(150)
+        btn_all.setFixedSize(80, 80)
         btn_grid.addWidget(btn_all)
 
-        btn_none = QPushButton('Nothing')
+        btn_none = QPushButton(u'\u2300')  # diameter ⌀, for null
+        btn_none.setFont(btn_font)
         btn_none.clicked.connect(self.select_none)
-        btn_none.setFixedWidth(150)
+        btn_none.setFixedSize(80, 80)
         btn_grid.addWidget(btn_none)
 
-        btn_random = QPushButton('3/3 Random')
+        btn_random = QPushButton(u'\u292E')  # ne arrow crossing se arrow ⤮
+        btn_random.setFont(btn_font)
         btn_random.clicked.connect(self.select_random)
-        btn_random.setFixedWidth(150)
+        btn_random.setFixedSize(80, 80)
         btn_grid.addWidget(btn_random)
 
         btn_group = QGroupBox('Controls')
@@ -236,14 +240,11 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.label, alignment=Qt.AlignCenter)
 
         # GENERATE BUTTON ==========================================
-        self.btn = QPushButton(u'\u21BB')
-        self.btn.clicked.connect(self.generate)
-        btn_font = self.btn.font()
-        btn_font.setPixelSize(60)
-        btn_font.setBold(True)
-        self.btn.setFont(btn_font)
-        self.btn.setFixedWidth(80)
-        layout.addWidget(self.btn, alignment=Qt.AlignHCenter)
+        self.btn_generate = QPushButton(u'\u21BB')  # cwise open circle arrow ↻
+        self.btn_generate.clicked.connect(self.generate)
+        self.btn_generate.setFont(btn_font)
+        self.btn_generate.setFixedSize(80, 80)
+        layout.addWidget(self.btn_generate, alignment=Qt.AlignHCenter)
 
     def generate(self):
         this_line = line(vowels=self.vow_active, consonants=self.con_active)
