@@ -10,44 +10,47 @@ HERE = Path(__file__).parent.resolve()
 MAX_SYL = 4
 
 ATUP = (u'\u1403', u'\u1405', u'\u1401', u'\u140A')
-ASTR = ''.join([a for a in ATUP])
+ASTR = 'A: ' + ''.join([a for a in ATUP])
 VTUP = (u'\u1431', u'\u1433', u'\u142F', u'\u1438')
-VSTR = ''.join([v for v in VTUP])
+VSTR = 'V: ' + ''.join([v for v in VTUP])
 UTUP = (u'\u144E', u'\u1450', u'\u144C', u'\u1455')
-USTR = ''.join(u for u in UTUP)
+USTR = 'U: ' + ''.join(u for u in UTUP)
 CARDINAL = [a for a in ATUP] + [v for v in VTUP] + [u for u in UTUP]
 
 PTUP = (u'\u146B', u'\u146D', u'\u1472', u'\u146F')
-PSTR = ''.join(p for p in PTUP)
+PSTR = 'P: ' + ''.join(p for p in PTUP)
 JTUP = (u'\u1489', u'\u148B', u'\u1490', u'\u148D')
-JSTR = ''.join(j for j in JTUP)
+JSTR = 'J: ' + ''.join(j for j in JTUP)
 LTUP = (u'\u14A3', u'\u14A5', u'\u14AA', u'\u14A7')
-LSTR = ''.join(el for el in LTUP)
+LSTR = 'L: ' + ''.join(el for el in LTUP)
 ORDINAL = [p for p in PTUP] + [j for j in JTUP] + [el for el in LTUP]
 
 ALL = CARDINAL + ORDINAL
+KEYS = ['A', 'V', 'U', 'P', 'J', 'L']
 
 
-def word() -> str:
+def word(letters: list[str] = ['A', 'V', 'U']) -> str:
     n_syl = random.randint(1, MAX_SYL)
+    choices = [char for grp in [eval(p + 'TUP')
+                                for p in letters] for char in grp]
 
     text = ''
     i = 0
     while i < n_syl:
-        text = text + random.choice(ALL)
+        text = text + random.choice(choices)
         i += 1
 
     return text
 
 
-def line() -> str:
+def line(letters: list[str]) -> str:
     max_length = 14
     n_words = random.randint(3, 5)
     text = ''
 
     i = 0
     while i < n_words:
-        text += word()
+        text += word(letters=letters)
         if len(text) < max_length:
             text += ' '
         i += 1
@@ -61,7 +64,7 @@ def line() -> str:
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Abugida 4: Aborugida/Eye Exam")
+        self.setWindowTitle("Abugida 4: Swampy Cree/Eye Exam")
         self.showMaximized()
         layout = QVBoxLayout()
         layout.setContentsMargins(50, 50, 50, 50)
@@ -77,7 +80,7 @@ class MainWindow(QMainWindow):
         if not log_path.exists():
             log_path.mkdir()
         now = datetime.now().strftime('%Y-%m-%d-%H:%M')
-        log_name = 'exam_' + now
+        log_name = 'swampy_' + now
         if Path(log_path/log_name).exists():
             log_name += datetime.now().strftime(':%S')
         self.log_file = log_path/log_name
@@ -87,16 +90,15 @@ class MainWindow(QMainWindow):
         select.setContentsMargins(50, 0, 50, 0)
         layout.addLayout(select)
 
-        tups = [el + 'TUP' for el in ['A', 'V', 'U', 'P', 'J', 'L']]
-        self.active = random.sample(['A', 'V', 'U', 'P', 'J', 'L'], 3)
+        self.active = random.sample(KEYS, 3)
 
-        # NORTH SYMBOLS =============================================
+        # CARDINALS =============================================
         card_grid = QVBoxLayout()
         card_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         card_grid.setContentsMargins(20, 20, 20, 20)
         card_grid.setSpacing(50)
 
-        self.card_cb = []
+        self.all_cb = []
         for grp in ['A', 'V', 'U']:
             exec('self.cb_{} = QCheckBox("{}")'
                  .format(grp, eval(grp + 'STR')))
@@ -105,20 +107,19 @@ class MainWindow(QMainWindow):
             exec('self.cb_{}.stateChanged.connect(self.update_groups)'
                  .format(grp))
             exec('card_grid.addWidget(self.cb_{})'.format(grp))
-            exec('self.card_cb.append(self.cb_{})'.format(grp))
+            exec('self.all_cb.append(self.cb_{})'.format(grp))
 
         card_group = QGroupBox('Cardinals')
         card_group.setLayout(card_grid)
         card_group.setFixedSize(400, 400)
         select.addWidget(card_group, alignment=Qt.AlignTop)
 
-        # NORTHWEST SYMBOLS =============================================
+        # ORDINALS =============================================
         ord_grid = QVBoxLayout()
         ord_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         ord_grid.setContentsMargins(20, 20, 20, 20)
         ord_grid.setSpacing(50)
 
-        self.ord_cb = []
         for grp in ['P', 'J', 'L']:
             exec('self.cb_{} = QCheckBox("{}")'
                  .format(grp, eval(grp + 'STR')))
@@ -127,7 +128,7 @@ class MainWindow(QMainWindow):
             exec('self.cb_{}.stateChanged.connect(self.update_groups)'
                  .format(grp))
             exec('ord_grid.addWidget(self.cb_{})'.format(grp))
-            exec('self.ord_cb.append(self.cb_{})'.format(grp))
+            exec('self.all_cb.append(self.cb_{})'.format(grp))
 
         ord_group = QGroupBox('Ordinals')
         ord_group.setLayout(ord_grid)
@@ -135,7 +136,7 @@ class MainWindow(QMainWindow):
         select.addWidget(ord_group, alignment=Qt.AlignTop)
 
         # LINE DISPLAY ============================================
-        init_line = line()
+        init_line = line(letters=self.active)
         self.label = QLabel(init_line)
         lab_font = self.label.font()
         lab_font.setPixelSize(150)
@@ -167,7 +168,7 @@ class MainWindow(QMainWindow):
         btn_maingrp.addWidget(self.btn_log)
 
     def generate(self):
-        this_line = line()
+        this_line = line(self.active)
         self.label.setText(this_line)
         if self.log_on:
             with open(self.log_file, 'a') as f:
@@ -178,9 +179,9 @@ class MainWindow(QMainWindow):
 
     def update_groups(self):
         self.active.clear()
-        for cb in self.vow_cb:
+        for cb in self.all_cb:
             if cb.isChecked():
-                self.active.append(cb.text())
+                self.active.append(cb.text()[:1])
 
 
 app = QApplication(sys.argv)
