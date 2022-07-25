@@ -2,7 +2,6 @@ import sys
 import random
 from datetime import datetime
 from pathlib import Path
-from string import ascii_uppercase
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
@@ -16,7 +15,7 @@ VTUP = (u'\u1431', u'\u1433', u'\u142F', u'\u1438')
 VSTR = ''.join([v for v in VTUP])
 UTUP = (u'\u144E', u'\u1450', u'\u144C', u'\u1455')
 USTR = ''.join(u for u in UTUP)
-NORTH = [a for a in ATUP] + [v for v in VTUP] + [u for u in UTUP]
+CARDINAL = [a for a in ATUP] + [v for v in VTUP] + [u for u in UTUP]
 
 PTUP = (u'\u146B', u'\u146D', u'\u1472', u'\u146F')
 PSTR = ''.join(p for p in PTUP)
@@ -24,9 +23,9 @@ JTUP = (u'\u1489', u'\u148B', u'\u1490', u'\u148D')
 JSTR = ''.join(j for j in JTUP)
 LTUP = (u'\u14A3', u'\u14A5', u'\u14AA', u'\u14A7')
 LSTR = ''.join(el for el in LTUP)
-NORTHWEST = [p for p in PTUP] + [j for j in JTUP] + [el for el in LTUP]
+ORDINAL = [p for p in PTUP] + [j for j in JTUP] + [el for el in LTUP]
 
-ALL = NORTH + NORTHWEST
+ALL = CARDINAL + ORDINAL
 
 
 def word() -> str:
@@ -92,12 +91,12 @@ class MainWindow(QMainWindow):
         self.active = random.sample(['A', 'V', 'U', 'P', 'J', 'L'], 3)
 
         # NORTH SYMBOLS =============================================
-        n_grid = QVBoxLayout()
-        n_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
-        n_grid.setContentsMargins(20, 20, 20, 20)
-        n_grid.setSpacing(50)
+        card_grid = QVBoxLayout()
+        card_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        card_grid.setContentsMargins(20, 20, 20, 20)
+        card_grid.setSpacing(50)
 
-        self.n_cb = []
+        self.card_cb = []
         for grp in ['A', 'V', 'U']:
             exec('self.cb_{} = QCheckBox("{}")'
                  .format(grp, eval(grp + 'STR')))
@@ -105,21 +104,21 @@ class MainWindow(QMainWindow):
                 exec('self.cb_{}.setCheckState(Qt.Checked)'.format(grp))
             exec('self.cb_{}.stateChanged.connect(self.update_groups)'
                  .format(grp))
-            exec('n_grid.addWidget(self.cb_{})'.format(grp))
-            exec('self.n_cb.append(self.cb_{})'.format(grp))
+            exec('card_grid.addWidget(self.cb_{})'.format(grp))
+            exec('self.card_cb.append(self.cb_{})'.format(grp))
 
-        n_group = QGroupBox('N-E-S-W Characters')
-        n_group.setLayout(n_grid)
-        n_group.setFixedSize(400, 400)
-        select.addWidget(n_group, alignment=Qt.AlignTop)
+        card_group = QGroupBox('Cardinals')
+        card_group.setLayout(card_grid)
+        card_group.setFixedSize(400, 400)
+        select.addWidget(card_group, alignment=Qt.AlignTop)
 
         # NORTHWEST SYMBOLS =============================================
-        nw_grid = QVBoxLayout()
-        nw_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
-        nw_grid.setContentsMargins(20, 20, 20, 20)
-        nw_grid.setSpacing(50)
+        ord_grid = QVBoxLayout()
+        ord_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        ord_grid.setContentsMargins(20, 20, 20, 20)
+        ord_grid.setSpacing(50)
 
-        self.nw_cb = []
+        self.ord_cb = []
         for grp in ['P', 'J', 'L']:
             exec('self.cb_{} = QCheckBox("{}")'
                  .format(grp, eval(grp + 'STR')))
@@ -127,13 +126,13 @@ class MainWindow(QMainWindow):
                 exec('self.cb_{}.setCheckState(Qt.Checked)'.format(grp))
             exec('self.cb_{}.stateChanged.connect(self.update_groups)'
                  .format(grp))
-            exec('nw_grid.addWidget(self.cb_{})'.format(grp))
-            exec('self.nw_cb.append(self.cb_{})'.format(grp))
+            exec('ord_grid.addWidget(self.cb_{})'.format(grp))
+            exec('self.ord_cb.append(self.cb_{})'.format(grp))
 
-        nw_group = QGroupBox('NW-NE-SE-SW Characters')
-        nw_group.setLayout(nw_grid)
-        nw_group.setFixedSize(400, 400)
-        select.addWidget(nw_group, alignment=Qt.AlignTop)
+        ord_group = QGroupBox('Ordinals')
+        ord_group.setLayout(ord_grid)
+        ord_group.setFixedSize(400, 400)
+        select.addWidget(ord_group, alignment=Qt.AlignTop)
 
         # LINE DISPLAY ============================================
         init_line = line()
@@ -172,7 +171,7 @@ class MainWindow(QMainWindow):
         self.label.setText(this_line)
         if self.log_on:
             with open(self.log_file, 'a') as f:
-                f.write(this_line.replace('-', '') + '\n')
+                f.write(this_line + '\n')
 
     def toggle_log(self, checked):
         self.log_on = checked
