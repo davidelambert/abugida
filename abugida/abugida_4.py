@@ -9,30 +9,24 @@ from PyQt5.QtWidgets import *
 HERE = Path(__file__).parent.resolve()
 MAX_SYL = 4
 
-ATUP = (u'\u1403', u'\u1405', u'\u1401', u'\u140A')
-ASTR = 'A: ' + ''.join([a for a in ATUP])
-VTUP = (u'\u1431', u'\u1433', u'\u142F', u'\u1438')
-VSTR = 'V: ' + ''.join([v for v in VTUP])
-UTUP = (u'\u144E', u'\u1450', u'\u144C', u'\u1455')
-USTR = 'U: ' + ''.join(u for u in UTUP)
-CARDINAL = [a for a in ATUP] + [v for v in VTUP] + [u for u in UTUP]
+A = (u'\u1403', u'\u1405', u'\u1401', u'\u140A')
+V = (u'\u1431', u'\u1433', u'\u142F', u'\u1438')
+U = (u'\u144E', u'\u1450', u'\u144C', u'\u1455')
+CARDINAL = [a for a in A] + [v for v in V] + [u for u in U]
 
-PTUP = (u'\u146B', u'\u146D', u'\u1472', u'\u146F')
-PSTR = 'P: ' + ''.join(p for p in PTUP)
-JTUP = (u'\u1489', u'\u148B', u'\u1490', u'\u148D')
-JSTR = 'J: ' + ''.join(j for j in JTUP)
-LTUP = (u'\u14A3', u'\u14A5', u'\u14AA', u'\u14A7')
-LSTR = 'L: ' + ''.join(el for el in LTUP)
-ORDINAL = [p for p in PTUP] + [j for j in JTUP] + [el for el in LTUP]
+P = (u'\u146B', u'\u146D', u'\u1472', u'\u146F')
+J = (u'\u1489', u'\u148B', u'\u1490', u'\u148D')
+L = (u'\u14A3', u'\u14A5', u'\u14AA', u'\u14A7')
+ORDINAL = [p for p in P] + [j for j in J] + [el for el in L]
 
-ALL = CARDINAL + ORDINAL
+ALL_CHAR = CARDINAL + ORDINAL
 KEYS = ['A', 'V', 'U', 'P', 'J', 'L']
+DICT = dict(zip(KEYS, [eval(k) for k in KEYS]))
 
 
 def word(letters: list[str] = ['A', 'V', 'U']) -> str:
     n_syl = random.randint(1, MAX_SYL)
-    choices = [char for grp in [eval(p + 'TUP')
-                                for p in letters] for char in grp]
+    choices = [char for grp in [eval(el) for el in letters] for char in grp]
 
     text = ''
     i = 0
@@ -101,7 +95,7 @@ class MainWindow(QMainWindow):
         self.all_cb = []
         for grp in ['A', 'V', 'U']:
             exec('self.cb_{} = QCheckBox("{}")'
-                 .format(grp, eval(grp + 'STR')))
+                 .format(grp, f'{grp}: {"".join(DICT[grp])}'))
             if grp in self.active:
                 exec('self.cb_{}.setCheckState(Qt.Checked)'.format(grp))
             exec('self.cb_{}.stateChanged.connect(self.update_groups)'
@@ -122,7 +116,7 @@ class MainWindow(QMainWindow):
 
         for grp in ['P', 'J', 'L']:
             exec('self.cb_{} = QCheckBox("{}")'
-                 .format(grp, eval(grp + 'STR')))
+                 .format(grp, f'{grp}: {"".join(DICT[grp])}'))
             if grp in self.active:
                 exec('self.cb_{}.setCheckState(Qt.Checked)'.format(grp))
             exec('self.cb_{}.stateChanged.connect(self.update_groups)'
