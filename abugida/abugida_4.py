@@ -108,6 +108,15 @@ class MainWindow(QMainWindow):
         card_group.setFixedSize(400, 400)
         select.addWidget(card_group, alignment=Qt.AlignTop)
 
+        # RANDOM BUTTON ====================================
+        btn_random = QPushButton('?')
+        btn_random.clicked.connect(self.randomize)
+        btn_font = btn_random.font()
+        btn_font.setPixelSize(40)
+        btn_random.setFont(btn_font)
+        btn_random.setFixedSize(BSIZE, BSIZE)
+        select.addWidget(btn_random)
+
         # ORDINALS =============================================
         ord_grid = QVBoxLayout()
         ord_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
@@ -148,8 +157,6 @@ class MainWindow(QMainWindow):
 
         self.btn_generate = QPushButton(u'\u21BB')  # cwise open circle arrow ↻
         self.btn_generate.clicked.connect(self.generate)
-        btn_font = self.btn_generate.font()
-        btn_font.setPixelSize(40)
         self.btn_generate.setFont(btn_font)
         self.btn_generate.setFixedSize(BSIZE, BSIZE)
         btn_maingrp.addWidget(self.btn_generate)
@@ -162,11 +169,20 @@ class MainWindow(QMainWindow):
         btn_maingrp.addWidget(self.btn_log)
 
     def generate(self):
+        if not self.active:
+            self.randomize()
         this_line = line(self.active)
         self.label.setText(this_line)
         if self.log_on:
             with open(self.log_file, 'a') as f:
                 f.write(this_line + '\n')
+
+    def randomize(self):
+        sample = random.sample(KEYS, 3)
+        for key in KEYS:
+            exec('self.cb_{}.setCheckState(Qt.Unchecked)'.format(key))
+            if key in sample:
+                exec('self.cb_{}.setCheckState(Qt.Checked)'.format(key))
 
     def toggle_log(self, checked):
         self.log_on = checked
