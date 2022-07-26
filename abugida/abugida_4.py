@@ -3,7 +3,8 @@ import random
 from datetime import datetime
 from pathlib import Path
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
 HERE = Path(__file__).parent.resolve()
@@ -55,6 +56,12 @@ def line(letters: list[str]) -> str:
     return text
 
 
+class ShapeCB(QCheckBox):
+    def __init__(self, key: str):
+        super().__init__()
+        self.key = key
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -93,15 +100,16 @@ class MainWindow(QMainWindow):
         card_grid.setSpacing(50)
 
         self.all_cb = []
-        for grp in ['A', 'V', 'U']:
-            exec('self.cb_{} = QCheckBox("{}")'
-                 .format(grp, f'{grp}: {"".join(DICT[grp])}'))
-            if grp in self.active:
-                exec('self.cb_{}.setCheckState(Qt.Checked)'.format(grp))
-            exec('self.cb_{}.stateChanged.connect(self.update_groups)'
-                 .format(grp))
-            exec('card_grid.addWidget(self.cb_{})'.format(grp))
-            exec('self.all_cb.append(self.cb_{})'.format(grp))
+        for g in ['A', 'V', 'U']:
+            exec('{}_icon = QIcon(str(Path(HERE/"img/{}.svg")))'.format(g, g))
+            exec('self.cb_{} = ShapeCB(key="{}")'.format(g, g))
+            exec('self.cb_{}.setIcon({}_icon)'.format(g, g))
+            exec('self.cb_{}.setIconSize(QSize(72, 72))'.format(g))
+            if g in self.active:
+                exec('self.cb_{}.setCheckState(Qt.Checked)'.format(g))
+            exec('self.cb_{}.stateChanged.connect(self.update)'.format(g))
+            exec('card_grid.addWidget(self.cb_{})'.format(g))
+            exec('self.all_cb.append(self.cb_{})'.format(g))
 
         card_group = QGroupBox('Cardinals')
         card_group.setLayout(card_grid)
@@ -123,15 +131,16 @@ class MainWindow(QMainWindow):
         ord_grid.setContentsMargins(20, 20, 20, 20)
         ord_grid.setSpacing(50)
 
-        for grp in ['P', 'J', 'L']:
-            exec('self.cb_{} = QCheckBox("{}")'
-                 .format(grp, f'{grp}: {"".join(DICT[grp])}'))
-            if grp in self.active:
-                exec('self.cb_{}.setCheckState(Qt.Checked)'.format(grp))
-            exec('self.cb_{}.stateChanged.connect(self.update_groups)'
-                 .format(grp))
-            exec('ord_grid.addWidget(self.cb_{})'.format(grp))
-            exec('self.all_cb.append(self.cb_{})'.format(grp))
+        for g in ['P', 'J', 'L']:
+            exec('{}_icon = QIcon(str(Path(HERE/"img/{}.svg")))'.format(g, g))
+            exec('self.cb_{} = ShapeCB(key="{}")'.format(g, g))
+            exec('self.cb_{}.setIcon({}_icon)'.format(g, g))
+            exec('self.cb_{}.setIconSize(QSize(72, 72))'.format(g))
+            if g in self.active:
+                exec('self.cb_{}.setCheckState(Qt.Checked)'.format(g))
+            exec('self.cb_{}.stateChanged.connect(self.update)'.format(g))
+            exec('ord_grid.addWidget(self.cb_{})'.format(g))
+            exec('self.all_cb.append(self.cb_{})'.format(g))
 
         ord_group = QGroupBox('Ordinals')
         ord_group.setLayout(ord_grid)
@@ -161,7 +170,7 @@ class MainWindow(QMainWindow):
         self.btn_generate.setFixedSize(BSIZE, BSIZE)
         btn_maingrp.addWidget(self.btn_generate)
 
-        self.btn_log = QPushButton(u'\u33D2')  # log symbol ㏒
+        self.btn_log = QPushButton(u'\u25CF')  # black circle ●
         self.btn_log.setCheckable(True)
         self.btn_log.clicked.connect(self.toggle_log)
         self.btn_log.setFont(btn_font)
@@ -187,11 +196,11 @@ class MainWindow(QMainWindow):
     def toggle_log(self, checked):
         self.log_on = checked
 
-    def update_groups(self):
+    def update(self):
         self.active.clear()
         for cb in self.all_cb:
             if cb.isChecked():
-                self.active.append(cb.text()[:1])
+                self.active.append(cb.key)
 
 
 app = QApplication(sys.argv)
