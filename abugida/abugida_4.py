@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import *
 
 HERE = Path(__file__).parent.resolve()
@@ -88,33 +88,39 @@ class MainWindow(QMainWindow):
 
         # LETTER SELECTION ================================
         select = QHBoxLayout()
+        select.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         select.setContentsMargins(50, 0, 50, 0)
+        select.setSpacing(100)
         layout.addLayout(select)
 
         self.active = random.sample(KEYS, 3)
 
         # CARDINALS =============================================
-        card_grid = QVBoxLayout()
-        card_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        card_grid = QHBoxLayout()
+        card_grid.setAlignment(Qt.AlignCenter)
         card_grid.setContentsMargins(20, 20, 20, 20)
         card_grid.setSpacing(50)
+
+        card_icon = QPixmap(str(HERE/'img/card_icon.svg'))
+        card_key = QLabel()
+        card_key.setPixmap(card_icon)
+        card_grid.addWidget(card_key)
 
         self.all_cb = []
         for g in ['A', 'V', 'U']:
             exec('{}_icon = QIcon(str(Path(HERE/"img/{}.svg")))'.format(g, g))
             exec('self.cb_{} = ShapeCB(key="{}")'.format(g, g))
             exec('self.cb_{}.setIcon({}_icon)'.format(g, g))
-            exec('self.cb_{}.setIconSize(QSize(72, 72))'.format(g))
+            exec('self.cb_{}.setIconSize(QSize(64, 64))'.format(g))
             if g in self.active:
                 exec('self.cb_{}.setCheckState(Qt.Checked)'.format(g))
             exec('self.cb_{}.stateChanged.connect(self.update)'.format(g))
             exec('card_grid.addWidget(self.cb_{})'.format(g))
             exec('self.all_cb.append(self.cb_{})'.format(g))
 
-        card_group = QGroupBox('Cardinals')
+        card_group = QGroupBox()
         card_group.setLayout(card_grid)
-        card_group.setFixedSize(400, 400)
-        select.addWidget(card_group, alignment=Qt.AlignTop)
+        select.addWidget(card_group)
 
         # RANDOM BUTTON ====================================
         btn_random = QPushButton('?')
@@ -126,26 +132,30 @@ class MainWindow(QMainWindow):
         select.addWidget(btn_random)
 
         # ORDINALS =============================================
-        ord_grid = QVBoxLayout()
-        ord_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        ord_grid = QHBoxLayout()
+        ord_grid.setAlignment(Qt.AlignHCenter)
         ord_grid.setContentsMargins(20, 20, 20, 20)
         ord_grid.setSpacing(50)
+
+        ord_icon = QPixmap(str(HERE/'img/ord_icon.svg'))
+        ord_key = QLabel('')
+        ord_key.setPixmap(ord_icon)
+        ord_grid.addWidget(ord_key)
 
         for g in ['P', 'J', 'L']:
             exec('{}_icon = QIcon(str(Path(HERE/"img/{}.svg")))'.format(g, g))
             exec('self.cb_{} = ShapeCB(key="{}")'.format(g, g))
             exec('self.cb_{}.setIcon({}_icon)'.format(g, g))
-            exec('self.cb_{}.setIconSize(QSize(72, 72))'.format(g))
+            exec('self.cb_{}.setIconSize(QSize(64, 64))'.format(g))
             if g in self.active:
                 exec('self.cb_{}.setCheckState(Qt.Checked)'.format(g))
             exec('self.cb_{}.stateChanged.connect(self.update)'.format(g))
             exec('ord_grid.addWidget(self.cb_{})'.format(g))
             exec('self.all_cb.append(self.cb_{})'.format(g))
 
-        ord_group = QGroupBox('Ordinals')
+        ord_group = QGroupBox()
         ord_group.setLayout(ord_grid)
-        ord_group.setFixedSize(400, 400)
-        select.addWidget(ord_group, alignment=Qt.AlignTop)
+        select.addWidget(ord_group)
 
         # LINE DISPLAY ============================================
         init_line = line(letters=self.active)
@@ -155,7 +165,6 @@ class MainWindow(QMainWindow):
         lab_font.setBold(True)
         lab_font.setFamily('Ubuntu Mono')
         self.label.setFont(lab_font)
-        self.label.setAlignment(Qt.AlignHCenter)
         layout.addWidget(self.label, alignment=Qt.AlignCenter)
 
         # GENERATE & LOG BUTTONS ================================
@@ -170,7 +179,7 @@ class MainWindow(QMainWindow):
         self.btn_generate.setFixedSize(BSIZE, BSIZE)
         btn_maingrp.addWidget(self.btn_generate)
 
-        self.btn_log = QPushButton(u'\u25CF')  # black circle ●
+        self.btn_log = QPushButton(u'\u25CF')  # black circle ● (for record)
         self.btn_log.setCheckable(True)
         self.btn_log.clicked.connect(self.toggle_log)
         self.btn_log.setFont(btn_font)

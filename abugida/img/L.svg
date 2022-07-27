@@ -30,7 +30,7 @@
      inkscape:guide-bbox="true"
      inkscape:snap-grids="false"
      inkscape:zoom="6.3046875"
-     inkscape:cx="77.482032"
+     inkscape:cx="46.23544"
      inkscape:cy="64"
      inkscape:window-width="1920"
      inkscape:window-height="1016"
@@ -56,37 +56,41 @@
     <g
        aria-label="ᒣ"
        id="text6729"
-       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583">
+       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583;fill:#000000">
       <path
          d="M 12.968783,14.773242 H 11.716147 V 6.5690917 H 7.2078949 V 5.5148925 h 5.7608881 z"
-         id="path83246" />
+         id="path83246"
+         style="fill:#000000" />
     </g>
     <g
        aria-label="ᒣ"
        transform="scale(1,-1)"
        id="text6729-3"
-       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583">
+       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583;fill:#000000">
       <path
          d="m 12.968783,-18.828808 h -1.252636 v -8.20415 H 7.2078949 v -1.054199 h 5.7608881 z"
-         id="path83243" />
+         id="path83243"
+         style="fill:#000000" />
     </g>
     <g
        aria-label="ᒣ"
        transform="scale(-1,1)"
        id="text6729-0"
-       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583">
+       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583;fill:#000000">
       <path
          d="m -20.898015,14.773242 h -1.252637 V 6.5690917 h -4.508252 V 5.5148925 h 5.760889 z"
-         id="path83240" />
+         id="path83240"
+         style="fill:#000000" />
     </g>
     <g
        aria-label="ᒣ"
        transform="scale(-1)"
        id="text6729-2"
-       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583">
+       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583;fill:#000000">
       <path
          d="m -20.898015,-19.093391 h -1.252637 v -8.204151 h -4.508252 v -1.054199 h 5.760889 z"
-         id="path83237" />
+         id="path83237"
+         style="fill:#000000" />
     </g>
   </g>
 </svg>

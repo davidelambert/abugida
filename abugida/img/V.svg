@@ -30,7 +30,7 @@
      inkscape:guide-bbox="true"
      inkscape:snap-grids="false"
      inkscape:zoom="6.3046875"
-     inkscape:cx="77.402726"
+     inkscape:cx="77.482032"
      inkscape:cy="64"
      inkscape:window-width="1920"
      inkscape:window-height="1016"
@@ -56,37 +56,41 @@
     <g
        aria-label="ᐱ"
        id="text6729"
-       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583">
+       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583;fill:#000000;fill-opacity:1">
       <path
          d="M 14.012581,12.037533 H 12.691732 L 16.2264,2.7791833 h 1.420068 l 3.528467,9.2583497 H 19.872689 L 16.933333,4.0132165 Z"
-         id="path25059" />
+         id="path25059"
+         style="fill:#000000;fill-opacity:1" />
     </g>
     <g
        aria-label="ᐱ"
        transform="rotate(90)"
        id="text6729-6"
-       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583">
+       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583;fill:#000000;fill-opacity:1">
       <path
          d="m 14.012581,-21.829184 h -1.320849 l 3.534668,-9.258349 h 1.420068 l 3.528467,9.258349 H 19.872689 L 16.933333,-29.8535 Z"
-         id="path25056" />
+         id="path25056"
+         style="fill:#000000;fill-opacity:1" />
     </g>
     <g
        aria-label="ᐱ"
        transform="rotate(-90)"
        id="text6729-6-9"
-       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583">
+       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583;fill:#000000;fill-opacity:1">
       <path
          d="m -19.854084,12.037533 h -1.32085 l 3.534668,-9.2583497 h 1.420068 l 3.528467,9.2583497 h -1.302246 l -2.939356,-8.0243165 z"
-         id="path25053" />
+         id="path25053"
+         style="fill:#000000;fill-opacity:1" />
     </g>
     <g
        aria-label="ᐱ"
        transform="scale(-1)"
        id="text6729-3"
-       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583">
+       style="font-size:12.7px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:0.264583;fill:#000000;fill-opacity:1">
       <path
          d="m -19.854084,-21.829184 h -1.32085 l 3.534668,-9.258349 h 1.420068 l 3.528467,9.258349 h -1.302246 l -2.939356,-8.024316 z"
-         id="path25050" />
+         id="path25050"
+         style="fill:#000000;fill-opacity:1" />
     </g>
   </g>
 </svg>
