@@ -69,17 +69,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
         BSIZE = 80
-
-        # LOG SETUP =================================
         self.log_on = False
-        log_path = HERE/'abugida_logs'
-        if not log_path.exists():
-            log_path.mkdir()
-        now = datetime.now().strftime('%Y-%m-%d-%H:%M')
-        log_name = 'vogon_' + now
-        if Path(log_path/log_name).exists():
-            log_name += datetime.now().strftime(':%S')
-        self.log_file = log_path/log_name
+        self.log_file = None
 
         # LINE DISPLAY ===================
         init_line = line()
@@ -122,6 +113,9 @@ class MainWindow(QMainWindow):
                 f.write(this_line.replace('-', '') + '\n')
 
     def toggle_log(self, checked):
+        if not self.log_file:
+            self.log_file = QFileDialog.getSaveFileName(
+                self, directory=str(Path.home()))[0]
         self.log_on = checked
 
 

@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
 
 HERE = Path(__file__).parent.resolve()
@@ -74,17 +74,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
         BSIZE = 80
-
-        # LOG SETUP =================================
         self.log_on = False
-        log_path = HERE/'abugida_logs'
-        if not log_path.exists():
-            log_path.mkdir()
-        now = datetime.now().strftime('%Y-%m-%d-%H:%M')
-        log_name = 'swampy_' + now
-        if Path(log_path/log_name).exists():
-            log_name += datetime.now().strftime(':%S')
-        self.log_file = log_path/log_name
+        self.log_file = None
 
         # LETTER SELECTION ================================
         select = QHBoxLayout()
@@ -101,14 +92,15 @@ class MainWindow(QMainWindow):
         card_grid.setContentsMargins(20, 20, 20, 20)
         card_grid.setSpacing(50)
 
-        card_icon = QPixmap(str(HERE/'img/card_icon.svg'))
+        card_icon = QtGui.QPixmap(str(HERE/'img/card_icon.svg'))
         card_key = QLabel()
         card_key.setPixmap(card_icon)
         card_grid.addWidget(card_key)
 
         self.all_cb = []
         for g in ['A', 'V', 'U']:
-            exec('{}_icon = QIcon(str(Path(HERE/"img/{}.svg")))'.format(g, g))
+            exec('{}_icon = QtGui.QIcon(str(Path(HERE/"img/{}.svg")))'
+                 .format(g, g))
             exec('self.cb_{} = ShapeCB(key="{}")'.format(g, g))
             exec('self.cb_{}.setIcon({}_icon)'.format(g, g))
             exec('self.cb_{}.setIconSize(QSize(64, 64))'.format(g))
@@ -137,13 +129,14 @@ class MainWindow(QMainWindow):
         ord_grid.setContentsMargins(20, 20, 20, 20)
         ord_grid.setSpacing(50)
 
-        ord_icon = QPixmap(str(HERE/'img/ord_icon.svg'))
+        ord_icon = QtGui.QPixmap(str(HERE/'img/ord_icon.svg'))
         ord_key = QLabel('')
         ord_key.setPixmap(ord_icon)
         ord_grid.addWidget(ord_key)
 
         for g in ['P', 'J', 'L']:
-            exec('{}_icon = QIcon(str(Path(HERE/"img/{}.svg")))'.format(g, g))
+            exec('{}_icon = QtGui.QIcon(str(Path(HERE/"img/{}.svg")))'
+                 .format(g, g))
             exec('self.cb_{} = ShapeCB(key="{}")'.format(g, g))
             exec('self.cb_{}.setIcon({}_icon)'.format(g, g))
             exec('self.cb_{}.setIconSize(QSize(64, 64))'.format(g))
@@ -203,6 +196,9 @@ class MainWindow(QMainWindow):
                 exec('self.cb_{}.setCheckState(Qt.Checked)'.format(key))
 
     def toggle_log(self, checked):
+        if not self.log_file:
+            self.log_file = QFileDialog.getSaveFileName(
+                self, directory=str(Path.home()))[0]
         self.log_on = checked
 
     def update(self):
