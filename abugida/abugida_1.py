@@ -146,7 +146,7 @@ class MainWindow(QMainWindow):
         self.btn_generate.setFixedSize(BSIZE, BSIZE)
         btn_maingrp.addWidget(self.btn_generate)
 
-        self.btn_log = QPushButton(u'\u33D2')
+        self.btn_log = QPushButton(u'\u25CF')
         self.btn_log.setCheckable(True)
         self.btn_log.clicked.connect(self.toggle_log)
         self.btn_log.setFont(btn_font)
