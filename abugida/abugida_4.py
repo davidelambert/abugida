@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
         select.addWidget(card_group)
 
         # RANDOM BUTTON ====================================
-        btn_random = QPushButton('?')
+        btn_random = QPushButton(u'\u2684')
         btn_random.clicked.connect(self.randomize)
         btn_font = btn_random.font()
         btn_font.setPixelSize(40)

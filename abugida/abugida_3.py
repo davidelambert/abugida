@@ -158,14 +158,14 @@ class MainWindow(QMainWindow):
         vdict = dict(zip(sorted(VOWELS), vmat))
 
         self.vow_cb = []
-        for vow, loc in vdict.items():
-            exec("self.cb_{} = QCheckBox('{}')".format(vow, vow))
-            if vow in self.vow_active:
-                exec("self.cb_{}.setCheckState(Qt.Checked)".format(vow))
-            exec("self.cb_{}.stateChanged.connect(self.update_vowels)".format(vow))
+        for v, loc in vdict.items():
+            exec("self.cb_{} = QCheckBox('{}')".format(v, v))
+            if v in self.vow_active:
+                exec("self.cb_{}.setCheckState(Qt.Checked)".format(v))
+            exec("self.cb_{}.stateChanged.connect(self.update_vow)".format(v))
             exec("vgrid.addWidget(self.cb_{}, {}, {})"
-                 .format(vow, loc[0], loc[1]))
-            exec("self.vow_cb.append(self.cb_{})".format(vow))
+                 .format(v, loc[0], loc[1]))
+            exec("self.vow_cb.append(self.cb_{})".format(v))
 
         vgroup = QGroupBox('Vowels/Diphthongs')
         vgroup.setLayout(vgrid)
@@ -183,14 +183,14 @@ class MainWindow(QMainWindow):
         cdict = dict(zip(sorted(CONSONANTS), cmat))
 
         self.con_cb = []
-        for con, loc in cdict.items():
-            exec("self.cb_{} = QCheckBox('{}')".format(con, con))
-            if con in self.con_active:
-                exec("self.cb_{}.setCheckState(Qt.Checked)".format(con))
-            exec("self.cb_{}.stateChanged.connect(self.update_cons)".format(con))
+        for c, loc in cdict.items():
+            exec("self.cb_{} = QCheckBox('{}')".format(c, c))
+            if c in self.con_active:
+                exec("self.cb_{}.setCheckState(Qt.Checked)".format(c))
+            exec("self.cb_{}.stateChanged.connect(self.update_cons)".format(c))
             exec("cgrid.addWidget(self.cb_{}, {}, {})"
-                 .format(con, loc[0], loc[1]))
-            exec("self.con_cb.append(self.cb_{})".format(con))
+                 .format(c, loc[0], loc[1]))
+            exec("self.con_cb.append(self.cb_{})".format(c))
 
         cgroup = QGroupBox('Consonants/Digraphs')
         cgroup.setLayout(cgrid)
@@ -199,7 +199,7 @@ class MainWindow(QMainWindow):
 
         # CONTROLS ============================================
         btn_grid = QVBoxLayout()
-        btn_grid.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        btn_grid.setAlignment(Qt.AlignCenter)
         btn_grid.setContentsMargins(20, 20, 20, 20)
         btn_grid.setSpacing(25)
 
@@ -217,7 +217,7 @@ class MainWindow(QMainWindow):
         btn_none.setFixedSize(BSIZE, BSIZE)
         btn_grid.addWidget(btn_none)
 
-        btn_random = QPushButton(u'\u292E')  # ne arrow crossing se arrow ⤮
+        btn_random = QPushButton(u'\u2684')  # die face-5 ⚄
         btn_random.setFont(btn_font)
         btn_random.clicked.connect(self.select_random)
         btn_random.setFixedSize(BSIZE, BSIZE)
@@ -269,7 +269,7 @@ class MainWindow(QMainWindow):
     def toggle_log(self, checked):
         self.log_on = checked
 
-    def update_vowels(self):
+    def update_vow(self):
         self.vow_active.clear()
         for cb in self.vow_cb:
             if cb.isChecked():
