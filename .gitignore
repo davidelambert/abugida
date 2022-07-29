@@ -1,5 +1,5 @@
 *.swp
 .vscode/
 .python-version
-ref/
-scratch/
+ref
+scratch

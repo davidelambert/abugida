@@ -8,11 +8,13 @@ pyqt5 = "*"
 gtts = "*"
 pyttsx3 = "*"
 playsound = "*"
+pygobject = "*"
 
 [dev-packages]
 autopep8 = "*"
 pycodestyle = "*"
 pydocstyle = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.10"
