@@ -1,6 +1,5 @@
 import sys
 import random
-from datetime import datetime
 from pathlib import Path
 
 from PyQt5.QtCore import Qt, QSize
