@@ -1,9 +1,10 @@
 import sys
 import random
-import uuid
+import time
 from pathlib import Path
 
 import gtts
+import pyttsx3
 from pedalboard import (Pedalboard,
                         Distortion,
                         Chorus,
@@ -29,7 +30,7 @@ SYLLABLES = [c + v.lower() for c in CONSONANTS for v in VOWELS] + list(VOWELS)
 MAX_SYL = 4
 
 LANGS = list(gtts.lang.tts_langs())
-ACCENT = {
+ACCENTS = {
     'en': ['com.au', 'co.uk', 'com', 'ca', 'co.in', 'ie', 'co.za'],
     'fr': ['ca', 'fr'],
     'pt': ['com.br', 'pt'],
@@ -110,7 +111,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(btn_maingrp)
 
         self.btn_generate = QPushButton(u'\u21BB')  # cwise open circle arrow ↻
-        self.btn_generate.clicked.connect(self.generate)
+        self.btn_generate.clicked.connect(self.new_line)
         btn_font = self.btn_generate.font()
         btn_font.setPixelSize(40)
         self.btn_generate.setFont(btn_font)
@@ -118,7 +119,7 @@ class MainWindow(QMainWindow):
         btn_maingrp.addWidget(self.btn_generate)
 
         self.btn_play = QPushButton(u'\u25B6')
-        self.btn_play.clicked.connect(self.play)
+        self.btn_play.clicked.connect(self.gen_speech)
         self.btn_play.setFont(btn_font)
         self.btn_play.setFixedSize(BSIZE, BSIZE)
         btn_maingrp.addWidget(self.btn_play)
@@ -130,58 +131,54 @@ class MainWindow(QMainWindow):
         self.btn_log.setFixedSize(BSIZE, BSIZE)
         btn_maingrp.addWidget(self.btn_log)
 
-    def generate(self):
+    def new_line(self):
         self.line = Line()
         self.label.setText(self.line.display)
         if self.log_on:
             with open(self.log_file, 'a') as f:
                 f.write(self.line.text + '\n')
 
-    def play(self):
+    def gen_speech(self):
         text = self.line.text
-
-        langs = []
-        for lang in random.choices(LANGS, k=3):
-            if lang in list(ACCENT):
-                langs.append((lang, random.choice(ACCENT[lang])))
-            else:
-                langs.append((lang, 'com'))
-
+        self.sound_file = TMP/'tmp.mp3'
+        lang = random.choice(LANGS)
+        if lang in list(ACCENTS):
+            tld = random.choice(ACCENTS[lang])
+        else:
+            tld = 'com'
         slow = random.choice([True, False])
 
-        mp3_files = []
-        for i in range(len(langs)):
-            name = str(uuid.uuid4()) + '.mp3'
-            mp3_files.append(TMP/name)
-
-        for i in range(len(mp3_files)):
+        robot = random.choice([True, False])
+        if robot:
+            self.robot(self.line.text)
+        else:
             try:
-                tts = gtts.gTTS(
-                    text=text,
-                    lang=langs[i][0],
-                    tld=langs[i][1],
-                    slow=slow
-                )
-            except gtts.gTTSError:
-                tts = gtts.gTTS(
-                    text=text,
-                    lang=langs[i][0],
-                    tld=langs[i][1],
-                    slow=slow
-                )
-            tts.save(mp3_files[i])
+                self.tts(text, lang, tld, slow, filename=self.sound_file)
+            except Exception as e:
+                print(e)
+                self.robot(self.line.text)
 
-        audio = [AudioSegment.from_mp3(str(f)) for f in mp3_files]
-        audio.sort(key=lambda x: len(x), reverse=True)
+    @classmethod
+    def tts(cls, text, lang, tld, slow, filename):
+        output = gtts.gTTS(
+            text=text,
+            lang=lang,
+            tld=tld,
+            slow=slow
+        )
+        output.save(filename)
+        playsound(filename)
 
-        mixed = audio[0]
-        for i in range(1, len(audio)):
-            mixed = mixed.overlay(audio[i])
-        mix_name = str(uuid.uuid4()) + '.mp3'
-        mixed.export(TMP/mix_name, format='wav')
-        self.sound_file = TMP/mix_name
-
-        playsound(self.sound_file)
+    @classmethod
+    def robot(cls, text):
+        engine = pyttsx3.init()
+        voices = engine.getProperty('voices')
+        voice = random.choice(voices)
+        engine.setProperty('voice', voice.id)
+        rate = random.randint(1, 150)
+        engine.setProperty('rate', rate)
+        engine.say(text)
+        engine.runAndWait()
 
     def toggle_log(self, checked):
         if not self.log_file:

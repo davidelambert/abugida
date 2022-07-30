@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 pyqt5 = "*"
 gtts = "*"
+pyttsx3 = "*"
 playsound = "*"
 pygobject = "*"
 pedalboard = "*"
