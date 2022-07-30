@@ -6,15 +6,17 @@ name = "pypi"
 [packages]
 pyqt5 = "*"
 gtts = "*"
-pyttsx3 = "*"
 playsound = "*"
 pygobject = "*"
+pedalboard = "*"
+pydub = "*"
 
 [dev-packages]
 autopep8 = "*"
 pycodestyle = "*"
 pydocstyle = "*"
 ipython = "*"
+ipykernel = "*"
 
 [requires]
 python_version = "3.10"
