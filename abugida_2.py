@@ -1,7 +1,7 @@
 import sys
 import random
-import time
 from pathlib import Path
+from tempfile import gettempdir
 
 import gtts
 import pyttsx3
@@ -20,9 +20,7 @@ from PyQt5.QtWidgets import *
 
 
 HERE = Path(__file__).parent.resolve()
-TMP = HERE/'tmp/'
-if not TMP.exists():
-    TMP.mkdir()
+TMP = Path(gettempdir())
 
 VOWELS = ('A', 'U', 'I', 'Ai', 'Au')
 CONSONANTS = ('B', 'G', 'D')
