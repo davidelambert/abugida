@@ -3,75 +3,87 @@ import random
 from pathlib import Path
 from tempfile import gettempdir
 
-import gtts
-import pyttsx3
-from pedalboard import (Pedalboard,
-                        Distortion,
-                        Chorus,
-                        Delay,
-                        PitchShift,
-                        Limiter)
-from pedalboard.io import AudioFile
-from pydub import AudioSegment
-from playsound import playsound
-
+import pySpeakNG
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-
 
 HERE = Path(__file__).parent.resolve()
 TMP = Path(gettempdir())
 
-VOWELS = ('A', 'U', 'I', 'Ai', 'Au')
-CONSONANTS = ('B', 'G', 'D')
-SYLLABLES = [c + v.lower() for c in CONSONANTS for v in VOWELS] + list(VOWELS)
-MAX_SYL = 4
+VOW = {'A': 'a', 'U': 'u', 'I': 'i:', 'Au': 'aU', 'Ai': 'aI', 'Ui': 'wi:'}
+CON = {'B': 'b', 'G': 'g', 'D': 'd'}
+SYL_DISP = [c + v.lower() for c in list(CON) for v in list(VOW)]
+SYL_PHON = [c + v for c in CON.values() for v in VOW.values()]
 
-LANGS = list(gtts.lang.tts_langs())
-ACCENTS = {
-    'en': ['com.au', 'co.uk', 'com', 'ca', 'co.in', 'ie', 'co.za'],
-    'fr': ['ca', 'fr'],
-    'pt': ['com.br', 'pt'],
-    'es': ['com', 'com.mx', 'es'],
-}
+
+def rand_args():
+    args = {
+        'voice': random.choice(pySpeakNG.VOICES),
+        'pitch': random.randint(0, 100),
+        'speed': random.randint(30, 200)
+    }
+
+    return args
+
+
+class Word:
+    def __init__(self, n_syl: int | None = None) -> None:
+        if not n_syl:
+            n_syl = random.randint(1, 5)
+
+        draw = random.choices(range(len(SYL_DISP)), k=n_syl)
+
+        self.syl_disp = [SYL_DISP[i] for i in draw]
+        self.display = ''.join(self.syl_disp)
+        self.text = ''.join(self.syl_disp)
+
+        self.syl = [SYL_PHON[i] for i in draw]
+        if len(self.syl) == 1:
+            stress = random.choice([True, False])
+            if stress:
+                self.syl[0] = "'" + self.syl[0]
+        elif len(self.syl) > 3:
+            stress1, stress2 = random.sample(range(len(self.syl)), k=2)
+            self.syl[stress1] = "'" + self.syl[stress1]
+            self.syl[stress2] = "," + self.syl[stress2]
+        else:
+            stress1 = random.choice(range(len(self.syl)))
+            self.syl[stress1] = "'" + self.syl[stress1]
+
+        self.phonetic = ''.join(self.syl)
+
+    def __repr__(self) -> str:
+        return self.text
+
+    def __str__(self) -> str:
+        return self.phonetic
 
 
 class Line:
-    def __init__(self):
-        self.display = ''
+    def __init__(self, n_words: None | int = None,
+                 n_syl: None | tuple[int] = None) -> None:
 
-        max_len = 30
-        n_words = random.randint(3, 5)
+        if not n_words and not n_syl:
+            n_words = random.randint(1, 7)
+            n_syl = [None] * n_words
 
-        i = 0
-        while i < n_words - 1:  # spaces after all but last word
-            self.display += self.word()
-            self.display += ' '
-            i += 1
-        self.display += self.word()
-        i += 1
+        if n_words and not n_syl:
+            n_syl = [None] * n_words
 
-        while len(self.display) > max_len:
-            self.display = self.display[:self.display.rfind('-')]
+        if not n_syl and not n_words:
+            n_words = len(n_syl)
 
-        self.text = self.display.replace('-', '').capitalize()
+        self.objects = [Word(n_syl=n_syl[w]) for w in range(n_words)]
+        self.words = [str(obj) for obj in self.objects]
+        self.phonetic = ' '.join(self.words)
+        self.display = ' '.join([obj.display for obj in self.objects])
+        self.text = self.display.replace('-', '')
 
-    @classmethod
-    def word(cls):
-        n_syl = random.randint(1, MAX_SYL)
-        text = ''
-        i = 0
-        while i < n_syl - 1:  # all but last syllable
-            text = text + random.choice(SYLLABLES) + '-'
-            i += 1
-        text = text + random.choice(SYLLABLES)  # no hyphen after last syllable
-        return text
-
-    def __repr__(self):
-        return self.display
-
-    def __str__(self):
+    def __repr__(self) -> str:
         return self.text
+
+    def __str__(self) -> str:
+        return self.phonetic
 
 
 class MainWindow(QMainWindow):
@@ -94,12 +106,13 @@ class MainWindow(QMainWindow):
         self.line = Line()
         self.label = QLabel(self.line.display)
         lab_font = self.label.font()
-        lab_font.setPixelSize(200)
+        lab_font.setPixelSize(180)
         lab_font.setBold(True)
-        lab_font.setFamily('Helvetica Ultra Compressed')
+        lab_font.setFamily('Helvetica Extra Compressed')
         lab_font.setWordSpacing(40)
         self.label.setFont(lab_font)
         self.label.setAlignment(Qt.AlignCenter)
+        self.label.setWordWrap(True)
         layout.addWidget(self.label, alignment=Qt.AlignCenter)
 
         # BUTTONS ================================
@@ -108,7 +121,7 @@ class MainWindow(QMainWindow):
         btn_maingrp.setSpacing(50)
         layout.addLayout(btn_maingrp)
 
-        self.btn_generate = QPushButton(u'\u21BB')  # cwise open circle arrow ↻
+        self.btn_generate = QPushButton(u'\u21BB')
         self.btn_generate.clicked.connect(self.new_line)
         btn_font = self.btn_generate.font()
         btn_font.setPixelSize(40)
@@ -117,7 +130,7 @@ class MainWindow(QMainWindow):
         btn_maingrp.addWidget(self.btn_generate)
 
         self.btn_play = QPushButton(u'\u25B6')
-        self.btn_play.clicked.connect(self.gen_speech)
+        self.btn_play.clicked.connect(self.speak)
         self.btn_play.setFont(btn_font)
         self.btn_play.setFixedSize(BSIZE, BSIZE)
         btn_maingrp.addWidget(self.btn_play)
@@ -136,47 +149,8 @@ class MainWindow(QMainWindow):
             with open(self.log_file, 'a') as f:
                 f.write(self.line.text + '\n')
 
-    def gen_speech(self):
-        text = self.line.text
-        self.sound_file = TMP/'tmp.mp3'
-        lang = random.choice(LANGS)
-        if lang in list(ACCENTS):
-            tld = random.choice(ACCENTS[lang])
-        else:
-            tld = 'com'
-        slow = random.choice([True, False])
-
-        robot = random.choice([True, False])
-        if robot:
-            self.robot(self.line.text)
-        else:
-            try:
-                self.tts(text, lang, tld, slow, filename=self.sound_file)
-            except Exception as e:
-                print(e)
-                self.robot(self.line.text)
-
-    @classmethod
-    def tts(cls, text, lang, tld, slow, filename):
-        output = gtts.gTTS(
-            text=text,
-            lang=lang,
-            tld=tld,
-            slow=slow
-        )
-        output.save(filename)
-        playsound(filename)
-
-    @classmethod
-    def robot(cls, text):
-        engine = pyttsx3.init()
-        voices = engine.getProperty('voices')
-        voice = random.choice(voices)
-        engine.setProperty('voice', voice.id)
-        rate = random.randint(1, 150)
-        engine.setProperty('rate', rate)
-        engine.say(text)
-        engine.runAndWait()
+    def speak(self):
+        pySpeakNG.speak(self.line, **rand_args())
 
     def toggle_log(self, checked):
         if not self.log_file:
