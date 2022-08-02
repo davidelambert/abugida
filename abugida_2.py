@@ -3,8 +3,10 @@ import random
 from pathlib import Path
 from tempfile import gettempdir
 
-import pySpeakNG
+from pySpeakNG import speak as espeak
+from pySpeakNG import LANGUAGES, VOICES
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
 HERE = Path(__file__).parent.resolve()
@@ -18,7 +20,7 @@ SYL_PHON = [c + v for c in CON.values() for v in VOW.values()]
 
 def rand_args():
     args = {
-        'voice': random.choice(pySpeakNG.VOICES),
+        'voice': random.choice(VOICES),
         'pitch': random.randint(0, 100),
         'speed': random.randint(30, 200)
     }
@@ -90,6 +92,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Abugida 2: Vogon Poetry")
+        self.setWindowIcon(QIcon(str(HERE/'img/abugida_icon.svg')))
         self.showMaximized()
         layout = QVBoxLayout()
         layout.setContentsMargins(50, 50, 50, 50)
@@ -97,10 +100,99 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        BSIZE = 80
+        BW = 160  # Button Width
+        BH = 40   # Button Height
         self.log_on = False
         self.log_file = None
-        self.sound_file = None
+
+        # VOICE CONTROL GROUP ===============================
+        voice_ctlgrp = QGridLayout()
+        voice_ctlgrp.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        voice_ctlgrp.setHorizontalSpacing(50)
+        layout.addLayout(voice_ctlgrp)
+
+        CTLW = 200  # control width
+
+        self.language = 'en-us'
+        lang_display = list(LANGUAGES.values())
+        self.ctl_lang = QComboBox()
+        self.ctl_lang.addItems(lang_display)
+        self.ctl_lang.setCurrentText(LANGUAGES[self.language])
+        self.ctl_lang.setFixedWidth(CTLW)
+        self.ctl_lang.currentTextChanged.connect(self.set_lang)
+        lab_lang = QLabel('Language')
+        voice_ctlgrp.addWidget(lab_lang, 0, 0, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_lang, 1, 0)
+
+        self.voice = random.choice(VOICES)
+        self.ctl_voice = QComboBox()
+        self.ctl_voice.addItems(sorted(VOICES, key=lambda x: x.lower()))
+        self.ctl_voice.setCurrentText(self.voice)
+        self.ctl_voice.setFixedWidth(CTLW)
+        self.ctl_voice.currentTextChanged.connect(self.set_voice)
+        lab_voice = QLabel('Voice')
+        voice_ctlgrp.addWidget(lab_voice, 0, 1, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_voice, 1, 1)
+
+        self.pitch = random.randint(0, 99)
+        self.ctl_pitch = QSlider()
+        self.ctl_pitch.setRange(0, 99)
+        self.ctl_pitch.setValue(self.pitch)
+        self.ctl_pitch.setOrientation(Qt.Horizontal)
+        self.ctl_pitch.setFixedWidth(CTLW)
+        self.ctl_pitch.valueChanged.connect(self.set_pitch)
+        lab_pitch = QLabel('Pitch Adj.')
+        voice_ctlgrp.addWidget(lab_pitch, 0, 2, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_pitch, 1, 2)
+
+        self.speed = random.randint(25, 250)
+        self.ctl_speed = QSlider()
+        self.ctl_speed.setRange(25, 250)
+        self.ctl_speed.setValue(self.speed)
+        self.ctl_speed.setOrientation(Qt.Horizontal)
+        self.ctl_speed.setFixedWidth(CTLW)
+        self.ctl_speed.valueChanged.connect(self.set_speed)
+        lab_speed = QLabel('Speed')
+        voice_ctlgrp.addWidget(lab_speed, 0, 3, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_speed, 1, 3)
+
+        self.gap = random.randint(1, 40)
+        self.ctl_gap = QSlider()
+        self.ctl_gap.setRange(1, 40)
+        self.ctl_gap.setValue(self.gap)
+        self.ctl_gap.setOrientation(Qt.Horizontal)
+        self.ctl_gap.setFixedWidth(CTLW)
+        self.ctl_gap.valueChanged.connect(self.set_gap)
+        lab_gap = QLabel('Gap')
+        voice_ctlgrp.addWidget(lab_gap, 0, 4, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_gap, 1, 4)
+
+        self.amplitude = 50
+        self.ctl_amplitude = QSlider()
+        self.ctl_amplitude.setRange(0, 75)
+        self.ctl_amplitude.setValue(self.amplitude)
+        self.ctl_amplitude.setOrientation(Qt.Horizontal)
+        self.ctl_amplitude.setFixedWidth(CTLW)
+        self.ctl_amplitude.valueChanged.connect(self.set_amplitude)
+        lab_amplitude = QLabel('Volume')
+        voice_ctlgrp.addWidget(lab_amplitude, 0, 5, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_amplitude, 1, 5)
+
+        # VOICE BUTTON GROUP =========================
+        voice_btngrp = QHBoxLayout()
+        voice_btngrp.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        voice_btngrp.setSpacing(50)
+        layout.addLayout(voice_btngrp)
+
+        self.btn_random = QPushButton('Randomize')
+        self.btn_random.clicked.connect(self.random_voice)
+        self.btn_random.setFixedSize(BW, BH)
+        voice_btngrp.addWidget(self.btn_random)
+
+        self.btn_play = QPushButton('Speak')
+        self.btn_play.clicked.connect(self.speak)
+        self.btn_play.setFixedSize(BW, BH)
+        voice_btngrp.addWidget(self.btn_play)
 
         # LINE DISPLAY ===================
         self.line = Line()
@@ -111,36 +203,28 @@ class MainWindow(QMainWindow):
         lab_font.setFamily('Helvetica Extra Compressed')
         lab_font.setWordSpacing(40)
         self.label.setFont(lab_font)
-        self.label.setAlignment(Qt.AlignCenter)
         self.label.setWordWrap(True)
-        layout.addWidget(self.label, alignment=Qt.AlignCenter)
+        self.label.setFixedHeight(700)
+        self.label.setAlignment(Qt.AlignCenter)
 
-        # BUTTONS ================================
-        btn_maingrp = QHBoxLayout()
-        btn_maingrp.setAlignment(Qt.AlignHCenter)
-        btn_maingrp.setSpacing(50)
-        layout.addLayout(btn_maingrp)
+        layout.addWidget(self.label)
 
-        self.btn_generate = QPushButton(u'\u21BB')
+        # TEXT CONTROL ================================
+        textgrp = QHBoxLayout()
+        textgrp.setAlignment(Qt.AlignHCenter)
+        textgrp.setSpacing(50)
+        layout.addLayout(textgrp)
+
+        self.btn_generate = QPushButton('New Line')
         self.btn_generate.clicked.connect(self.new_line)
-        btn_font = self.btn_generate.font()
-        btn_font.setPixelSize(40)
-        self.btn_generate.setFont(btn_font)
-        self.btn_generate.setFixedSize(BSIZE, BSIZE)
-        btn_maingrp.addWidget(self.btn_generate)
+        self.btn_generate.setFixedSize(BW, BH)
+        textgrp.addWidget(self.btn_generate)
 
-        self.btn_play = QPushButton(u'\u25B6')
-        self.btn_play.clicked.connect(self.speak)
-        self.btn_play.setFont(btn_font)
-        self.btn_play.setFixedSize(BSIZE, BSIZE)
-        btn_maingrp.addWidget(self.btn_play)
-
-        self.btn_log = QPushButton(u'\u25CF')
+        self.btn_log = QPushButton('Text Log: OFF')
         self.btn_log.setCheckable(True)
         self.btn_log.clicked.connect(self.toggle_log)
-        self.btn_log.setFont(btn_font)
-        self.btn_log.setFixedSize(BSIZE, BSIZE)
-        btn_maingrp.addWidget(self.btn_log)
+        self.btn_log.setFixedSize(BW, BH)
+        textgrp.addWidget(self.btn_log)
 
     def new_line(self):
         self.line = Line()
@@ -149,14 +233,55 @@ class MainWindow(QMainWindow):
             with open(self.log_file, 'a') as f:
                 f.write(self.line.text + '\n')
 
-    def speak(self):
-        pySpeakNG.speak(f"[[{self.line}]]", **rand_args())
-
     def toggle_log(self, checked):
         if not self.log_file:
             self.log_file = QFileDialog.getSaveFileName(
                 self, directory=str(Path.home()))[0]
         self.log_on = checked
+        if checked:
+            self.btn_log.setText('Text Log: ON')
+        else:
+            self.btn_log.setText('Text Log: OFF')
+
+    def set_lang(self, t):
+        lang_index = list(LANGUAGES.values()).index(t)
+        self.language = list(LANGUAGES)[lang_index]
+
+    def set_voice(self, t):
+        self.voice = t
+
+    def set_pitch(self, n):
+        self.pitch = n
+
+    def set_speed(self, n):
+        self.speed = n
+
+    def set_gap(self, n):
+        self.gap = n
+
+    def set_amplitude(self, n):
+        self.amplitude = n
+
+    def random_voice(self):
+        self.language = random.choice(list(LANGUAGES))
+        self.ctl_lang.setCurrentText(LANGUAGES[self.language])
+        self.voice = random.choice(VOICES)
+        self.ctl_voice.setCurrentText(self.voice)
+        self.pitch = random.randint(0, 99)
+        self.ctl_pitch.setValue(self.pitch)
+        self.speed = random.randint(25, 250)
+        self.ctl_speed.setValue(self.speed)
+        self.gap = random.randint(1, 40)
+        self.ctl_gap.setValue(self.gap)
+
+    def speak(self):
+        espeak(f"[[{self.line}]]",
+               language=self.language,
+               voice=self.voice,
+               pitch=self.pitch,
+               speed=self.speed,
+               gap=self.gap,
+               amplitude=self.amplitude)
 
 
 app = QApplication(sys.argv)

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="36"
+   height="36"
+   viewBox="0 0 9.5249998 9.5250003"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="abugida_icon.svg"
+   inkscape:export-filename="/home/delamb/Dropbox/projects/werock/abugida/img/abugida_icon.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     width="36px"
+     inkscape:zoom="33.555556"
+     inkscape:cx="15.854305"
+     inkscape:cy="15.660596"
+     inkscape:window-width="1920"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       aria-label="ᐊ"
+       id="text3554"
+       style="font-size:4.23333px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583" />
+    <g
+       aria-label="ᐳ"
+       id="text3554-8"
+       style="font-size:4.23333px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583" />
+    <g
+       aria-label="ᑭ"
+       id="text3554-81"
+       style="font-size:4.23333px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583" />
+    <g
+       aria-label="ᑕ"
+       id="text3554-8-8"
+       style="font-size:4.23333px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583;fill:#0055d4">
+      <path
+         id="path51042"
+         d="m 8.6888902,9.1617095 h -1.832249 c -0.5061041,0 -0.9399076,-0.2035832 -1.3014105,-0.6107497 C 5.1937277,8.1437934 5.0129762,7.6529105 5.0129762,7.0783111 c 0,-0.5745994 0.1807515,-1.0654823 0.5422545,-1.4726488 C 5.9167336,5.1984958 6.3505371,4.9949126 6.8566412,4.9949126 h 1.832249 v 0.4794671 h -1.832249 c -0.3729189,0 -0.6925635,0.1579197 -0.958934,0.4737591 -0.2625653,0.3120341 -0.393848,0.6887582 -0.393848,1.1301723 0,0.4414141 0.1312827,0.8200409 0.393848,1.1358802 0.2663705,0.3120341 0.5860151,0.4680512 0.958934,0.4680512 h 1.832249 z"
+         style="stroke-width:0.356746;fill:#0055d4"
+         sodipodi:nodetypes="csssssccscscscc" />
+    </g>
+    <path
+       d="M 3.6598321,1.2017119 1.4965223,2.4859985 3.6598321,3.7702852 Z M 4.1392989,0.40260028 V 4.569397 L 0.56612795,2.4859985 Z"
+       style="stroke-width:0.094389;fill:#0055d4"
+       id="path1021" />
+    <path
+       d="M 5.520244,0.40260027 9.0934154,2.4859985 5.520244,4.569397 V 4.0556825 L 8.1630204,2.4859985 5.520244,0.91631497 Z"
+       style="stroke-width:0.094389;fill:#ffcc00"
+       id="path1206" />
+    <path
+       d="M 2.1186879,7.1335896 V 6.6655385 h 0.6164577 c 0.2587598,0 0.4794671,-0.070398 0.6621211,-0.2111939 0.182654,-0.1407959 0.2739811,-0.312034 0.2739811,-0.5137147 0,-0.1978753 -0.091327,-0.3596003 -0.2739811,-0.485175 C 3.2184179,5.3298802 2.9977107,5.267093 2.7351456,5.267093 2.4687749,5.267093 2.2461652,5.3717386 2.0673164,5.5810296 1.8884675,5.7903209 1.7990431,6.00532 1.7990431,6.2260269 V 8.9658388 H 1.3309921 V 6.1118682 c 0,-0.3158395 0.1407959,-0.6126522 0.4223876,-0.8904388 0.2815917,-0.2815918 0.608847,-0.4223877 0.9817659,-0.4223877 0.3843345,0 0.7134926,0.1141587 0.9874737,0.3424764 0.2777866,0.2283177 0.4166796,0.4946883 0.4166796,0.7991118 0,0.3120342 -0.1217692,0.5898205 -0.3653081,0.8333594 C 3.5304519,7.0137227 3.2222231,7.1335896 2.8493043,7.1335896 Z"
+       style="stroke-width:0.094389;fill:#ffcc00"
+       id="path1353" />
+  </g>
+</svg>
