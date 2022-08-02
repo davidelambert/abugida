@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d09a926a4b8622728b59e0f748913e48bbdfb58f8a60c3d002b3d9047cb911a6"
+            "sha256": "552e314024387df45d84e42ac00ee89df525ee139057d520d060d01e3e0ab94a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -89,12 +89,8 @@
             "version": "==12.11.0"
         },
         "pyspeakng": {
-            "hashes": [
-                "sha256:324956a33cbd3cd00b716fa90c7088ece4eff9765a3fd97325e176aa92cb6996",
-                "sha256:aec0fb4fd7dbd5cb66b7db4ffea6cab27f8c636716986d8548ef2e3941142294"
-            ],
-            "index": "pypi",
-            "version": "==0.1.1"
+            "editable": true,
+            "path": "/home/delamb/projects/pySpeakNG"
         }
     },
     "develop": {
