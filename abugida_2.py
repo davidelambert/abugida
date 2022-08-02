@@ -64,7 +64,7 @@ class Line:
                  n_syl: None | tuple[int] = None) -> None:
 
         if not n_words and not n_syl:
-            n_words = random.randint(1, 7)
+            n_words = random.randint(1, 5)
             n_syl = [None] * n_words
 
         if n_words and not n_syl:
@@ -150,7 +150,7 @@ class MainWindow(QMainWindow):
                 f.write(self.line.text + '\n')
 
     def speak(self):
-        pySpeakNG.speak(self.line, **rand_args())
+        pySpeakNG.speak(f"[[{self.line}]]", **rand_args())
 
     def toggle_log(self, checked):
         if not self.log_file:
