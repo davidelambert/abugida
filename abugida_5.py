@@ -246,15 +246,10 @@ class DisplayWindow(QWidget):
         layout.addWidget(self.label)
 
 
-class WorkerSignals(QObject):
-    cmd_str = pyqtSignal(str)
-    finished = pyqtSignal()
-
-
 class SpeechRunner(QRunnable):
     def __init__(self, voice, pitch, speed, gap, amplitude, text):
         super().__init__()
-        self.signals = WorkerSignals()
+        # self.signals = WorkerSignals()
         self.voice = voice
         self.pitch = pitch
         self.speed = speed
@@ -270,9 +265,6 @@ class SpeechRunner(QRunnable):
                     self.amplitude, self.text, ))
 
         subprocess.run(cmd_split)
-
-        self.signals.cmd_str.emit(' '.join(cmd_split))
-        self.signals.finished.emit()
 
 
 class MainWindow(QMainWindow):
@@ -639,7 +631,6 @@ class MainWindow(QMainWindow):
             amplitude=self.amplitude,
             text=self.line.xsampa
         )
-        self.runner.signals.cmd_str.connect(self.print_cmd)
         self.threadpool.start(self.runner)
 
     def print_cmd(self, s):
