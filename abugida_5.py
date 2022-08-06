@@ -464,11 +464,6 @@ class MainWindow(QMainWindow):
         btn_speak.clicked.connect(self.speak)
         vgrp.addWidget(btn_speak, alignment=Qt.AlignBottom)
 
-        btn_sing = QPushButton('Sing')
-        btn_sing.setFixedSize(BW, BH)
-        btn_sing.clicked.connect(self.sing)
-        vgrp.addWidget(btn_sing, alignment=Qt.AlignBottom)
-
         vbox = QGroupBox()
         vbox.setLayout(vgrp)
         vbox.setFixedSize(1000, 120)
@@ -596,9 +591,6 @@ class MainWindow(QMainWindow):
         opts = self.proc_vopt(self.voice, self.pitch, self.speed)
 
         espeak("[[{}]]".format(self.line.xsampa), *opts)
-
-    def sing(self):
-        pass
 
 
 app = QApplication(sys.argv)
