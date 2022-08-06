@@ -226,6 +226,7 @@ class DisplayWindow(QWidget):
     def __init__(self, text=''):
         super().__init__()
         self.setWindowTitle("Abugida 5: Einstürzende Zikkuraten")
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setContentsMargins(50, 50, 50, 50)
         layout = QVBoxLayout()
         self.setLayout(layout)
