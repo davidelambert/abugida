@@ -1,5 +1,7 @@
 import sys
 import random
+import subprocess
+import shlex
 from pathlib import Path
 from tempfile import gettempdir
 from typing import Union
@@ -7,8 +9,16 @@ from string import ascii_uppercase
 
 from pySpeakNG import speak as espeak
 from pySpeakNG import LANGUAGES, VOICES
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QFontDatabase, QFont
+
+from PyQt5.QtCore import (Qt,
+                          QObject,
+                          QRunnable,
+                          QThreadPool,
+                          pyqtSignal,
+                          pyqtSlot)
+from PyQt5.QtGui import (QIcon,
+                         QFontDatabase,
+                         QFont)
 from PyQt5.QtWidgets import *
 
 HERE = Path(__file__).parent.resolve()
@@ -235,12 +245,41 @@ class DisplayWindow(QWidget):
         layout.addWidget(self.label)
 
 
+class WorkerSignals(QObject):
+    cmd_str = pyqtSignal(str)
+    finished = pyqtSignal()
+
+
+class SpeechRunner(QRunnable):
+    def __init__(self, voice, pitch, speed, gap, amplitude, text):
+        super().__init__()
+        self.signals = WorkerSignals()
+        self.voice = voice
+        self.pitch = pitch
+        self.speed = speed
+        self.gap = gap,
+        self.amplitude = amplitude
+        self.text = "[[" + text + "]]"
+
+    @pyqtSlot()
+    def run(self):
+        cmd_split = shlex.split(
+            "espeak-ng -ven+{} -p {} -s {} -g {} -a {} \"{}\""
+            .format(self.voice, self.pitch, self.speed, self.gap,
+                    self.amplitude, self.text, ))
+
+        subprocess.run(cmd_split)
+
+        self.signals.cmd_str.emit(' '.join(cmd_split))
+        self.signals.finished.emit()
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Abugida 5: Einstürzende Zikkuraten")
         self.setWindowIcon(QIcon(str(HERE/'img/abugida_icon.svg')))
-        self.setMinimumSize(1300, 900)
+        self.setMinimumSize(1300, 975)
         layout = QVBoxLayout()
         layout.setContentsMargins(50, 50, 50, 50)
         layout.setSpacing(50)
@@ -253,6 +292,7 @@ class MainWindow(QMainWindow):
         self.log_on = False
         self.log_file = None
         self.key_window = KeyWindow()
+        self.threadpool = QThreadPool()
 
         # TYPOGRAPHY =====================
         QFontDatabase.addApplicationFont(
@@ -393,7 +433,7 @@ class MainWindow(QMainWindow):
 
         tbox = QGroupBox()
         tbox.setLayout(tgrp)
-        tbox.setFixedSize(1000, 100)
+        tbox.setFixedSize(800, 120)
         layout.addWidget(tbox, alignment=Qt.AlignCenter)
 
         # DISPLAY ===========================
@@ -590,13 +630,19 @@ class MainWindow(QMainWindow):
         self.ctl_gap.setValue(self.gap)
 
     def speak(self):
-        espeak(f"[[{self.line.xsampa}]]",
-               language='en-us',
-               voice=self.voice,
-               pitch=self.pitch,
-               speed=self.speed,
-               gap=self.gap,
-               amplitude=self.amplitude)
+        self.runner = SpeechRunner(
+            voice=self.voice,
+            pitch=self.pitch,
+            speed=self.speed,
+            gap=self.gap,
+            amplitude=self.amplitude,
+            text=self.line.xsampa
+        )
+        self.runner.signals.cmd_str.connect(self.print_cmd)
+        self.threadpool.start(self.runner)
+
+    def print_cmd(self, s):
+        print(s)
 
 
 app = QApplication(sys.argv)
