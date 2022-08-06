@@ -41,7 +41,7 @@ VD2 = {'oʊ': 'oU', 'ɔɪ': 'OI', 'aʊ': 'aU', }
 VOW = VA | VE | VI | VO | VU | VD1 | VD2
 
 VKEY = [{'æ': 'trAp', 'ɑː': 'pAlm ', },
-        {'e': 'drEss (brit)', 'ɛ': 'drEss (amer)',
+        {'e': 'drEss (uk)', 'ɛ': 'drEss (us)',
          'ə': 'commA', 'ɜ': 'nUrse', },
         {'ɪ': 'kIt', 'iː': 'flEEce', },
         {'ɔ': 'tOt', 'ɔː': 'tAUGHt', },
@@ -561,38 +561,41 @@ class MainWindow(QMainWindow):
     def set_pitch(self, s):
         self.pitch = s
 
-    def speak(self):
-        if self.voice == '(Random)':
+    @classmethod
+    def proc_vopt(cls, voice: str, pitch: str, speed: str) -> list:
+        if voice == '(Random)':
             vopt = random.choice(VOICES)
         else:
-            vopt = self.voice
+            vopt = voice
 
-        if self.speed == 'Slow':
+        if pitch == 'Low':
+            popt = random.randint(0, 33)
+        elif pitch == 'Middle':
+            popt = random.randint(33, 66)
+        elif pitch == 'High':
+            popt = random.randint(66, 99)
+        else:
+            popt = random.randint(0, 99)
+
+        if speed == 'Slow':
             sopt = random.randint(25, 100)
             gopt = random.randint(26, 40)
-        elif self.speed == 'Medium':
+        elif speed == 'Medium':
             sopt = random.randint(100, 175)
             gopt = random.randint(13, 26)
-        elif self.speed == 'Fast':
+        elif speed == 'Fast':
             sopt = random.randint(175, 250)
             gopt = random.randint(1, 13)
         else:  # for default: '(Random)'
             sopt = random.randint(25, 250)
             gopt = random.randint(1, 40)
 
-        if self.pitch == 'Low':
-            popt = random.randint(0, 33)
-        elif self.pitch == 'Middle':
-            popt = random.randint(33, 66)
-        elif self.pitch == 'High':
-            popt = random.randint(66, 99)
-        else:
-            popt = random.randint(0, 99)
+        return ['en-us', vopt, popt, sopt, gopt, ]
 
-        print(self.line.xsampa)
+    def speak(self):
+        opts = self.proc_vopt(self.voice, self.pitch, self.speed)
 
-        espeak("[[{}]]".format(self.line.xsampa), language='en-us',
-               voice=vopt, pitch=popt, speed=sopt, gap=gopt)
+        espeak("[[{}]]".format(self.line.xsampa), *opts)
 
     def sing(self):
         pass
