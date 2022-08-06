@@ -410,63 +410,80 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.display)
 
         # VOICE =====================
-        vgrp = QHBoxLayout()
-        vgrp.setAlignment(Qt.AlignCenter)
-        vgrp.setSpacing(25)
+        voice_ctlgrp = QGridLayout()
+        voice_ctlgrp.setAlignment(Qt.AlignCenter)
+        voice_ctlgrp.setHorizontalSpacing(50)
+        voice_ctlgrp.setVerticalSpacing(0)
 
-        voice_grid = QVBoxLayout()
-        voice_grid.setSpacing(2)
-        voice_grid.setAlignment(Qt.AlignBottom)
-        voice_opt = sorted(VOICES + ['(Random)'], key=lambda x: x.lower())
-        self.voice = '(Random)'
-        voice_lab = QLabel('Voice')
-        voice_sel = QComboBox()
-        voice_sel.addItems(voice_opt)
-        voice_sel.setCurrentText(self.voice)
-        voice_sel.setFixedWidth(BW)
-        voice_sel.currentTextChanged.connect(self.set_voice)
-        voice_grid.addWidget(voice_lab)
-        voice_grid.addWidget(voice_sel)
-        vgrp.addLayout(voice_grid)
+        CTLW = 80
 
-        speed_grid = QVBoxLayout()
-        speed_grid.setSpacing(2)
-        speed_grid.setAlignment(Qt.AlignBottom)
-        speed_opt = ['(Random)', 'Slow', 'Medium', 'Fast']
-        self.speed = '(Random)'
-        speed_lab = QLabel('Speed')
-        speed_sel = QComboBox()
-        speed_sel.addItems(speed_opt)
-        speed_sel.setCurrentText(self.speed)
-        speed_sel.setFixedWidth(BW)
-        speed_sel.currentTextChanged.connect(self.set_speed)
-        speed_grid.addWidget(speed_lab)
-        speed_grid.addWidget(speed_sel)
-        vgrp.addLayout(speed_grid)
+        self.voice = random.choice(VOICES)
+        self.ctl_voice = QComboBox()
+        self.ctl_voice.addItems(sorted(VOICES, key=lambda x: x.lower()))
+        self.ctl_voice.setCurrentText(self.voice)
+        self.ctl_voice.setFixedWidth(BW)
+        self.ctl_voice.currentTextChanged.connect(self.set_voice)
+        lab_voice = QLabel('Voice')
+        voice_ctlgrp.addWidget(lab_voice, 0, 0, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_voice, 1, 0)
 
-        pitch_grid = QVBoxLayout()
-        pitch_grid.setSpacing(2)
-        pitch_grid.setAlignment(Qt.AlignBottom)
-        pitch_opt = ['(Random)', 'Low', 'Middle', 'High']
-        self.pitch = '(Random)'
-        pitch_lab = QLabel('Pitch')
-        pitch_sel = QComboBox()
-        pitch_sel.addItems(pitch_opt)
-        pitch_sel.setCurrentText(self.pitch)
-        pitch_sel.setFixedWidth(BW)
-        pitch_sel.currentTextChanged.connect(self.set_pitch)
-        pitch_grid.addWidget(pitch_lab)
-        pitch_grid.addWidget(pitch_sel)
-        vgrp.addLayout(pitch_grid)
+        self.pitch = random.randint(0, 99)
+        self.ctl_pitch = QSlider()
+        self.ctl_pitch.setRange(0, 99)
+        self.ctl_pitch.setValue(self.pitch)
+        self.ctl_pitch.setOrientation(Qt.Horizontal)
+        self.ctl_pitch.setFixedWidth(CTLW)
+        self.ctl_pitch.valueChanged.connect(self.set_pitch)
+        lab_pitch = QLabel('Pitch')
+        voice_ctlgrp.addWidget(lab_pitch, 0, 1, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_pitch, 1, 1)
+
+        self.speed = random.randint(25, 250)
+        self.ctl_speed = QSlider()
+        self.ctl_speed.setRange(25, 250)
+        self.ctl_speed.setValue(self.speed)
+        self.ctl_speed.setOrientation(Qt.Horizontal)
+        self.ctl_speed.setFixedWidth(CTLW)
+        self.ctl_speed.valueChanged.connect(self.set_speed)
+        lab_speed = QLabel('Speed')
+        voice_ctlgrp.addWidget(lab_speed, 0, 2, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_speed, 1, 2)
+
+        self.gap = random.randint(1, 40)
+        self.ctl_gap = QSlider()
+        self.ctl_gap.setRange(1, 40)
+        self.ctl_gap.setValue(self.gap)
+        self.ctl_gap.setOrientation(Qt.Horizontal)
+        self.ctl_gap.setFixedWidth(CTLW)
+        self.ctl_gap.valueChanged.connect(self.set_gap)
+        lab_gap = QLabel('Gap')
+        voice_ctlgrp.addWidget(lab_gap, 0, 3, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_gap, 1, 3)
+
+        self.amplitude = 50
+        self.ctl_amplitude = QSlider()
+        self.ctl_amplitude.setRange(0, 75)
+        self.ctl_amplitude.setValue(self.amplitude)
+        self.ctl_amplitude.setOrientation(Qt.Horizontal)
+        self.ctl_amplitude.setFixedWidth(CTLW)
+        self.ctl_amplitude.valueChanged.connect(self.set_amplitude)
+        lab_amplitude = QLabel('Volume')
+        voice_ctlgrp.addWidget(lab_amplitude, 0, 4, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(self.ctl_amplitude, 1, 4)
+
+        btn_randV = QPushButton('Randomize')
+        btn_randV.setFixedSize(BW, BH)
+        btn_randV.clicked.connect(self.random_voice)
+        voice_ctlgrp.addWidget(btn_randV, 0, 5, 2, 1)
 
         btn_speak = QPushButton('Speak')
         btn_speak.setFixedSize(BW, BH)
         btn_speak.clicked.connect(self.speak)
-        vgrp.addWidget(btn_speak, alignment=Qt.AlignBottom)
+        voice_ctlgrp.addWidget(btn_speak, 0, 6, 2, 1)
 
         vbox = QGroupBox()
-        vbox.setLayout(vgrp)
-        vbox.setFixedSize(1000, 120)
+        vbox.setLayout(voice_ctlgrp)
+        vbox.setFixedSize(1200, 120)
         layout.addWidget(vbox, alignment=Qt.AlignCenter)
 
     @classmethod
@@ -550,47 +567,36 @@ class MainWindow(QMainWindow):
     def set_voice(self, s):
         self.voice = s
 
-    def set_speed(self, s):
-        self.speed = s
+    def set_pitch(self, n):
+        self.pitch = n
 
-    def set_pitch(self, s):
-        self.pitch = s
+    def set_speed(self, n):
+        self.speed = n
 
-    @classmethod
-    def proc_vopt(cls, voice: str, pitch: str, speed: str) -> list:
-        if voice == '(Random)':
-            vopt = random.choice(VOICES)
-        else:
-            vopt = voice
+    def set_gap(self, n):
+        self.gap = n
 
-        if pitch == 'Low':
-            popt = random.randint(0, 33)
-        elif pitch == 'Middle':
-            popt = random.randint(33, 66)
-        elif pitch == 'High':
-            popt = random.randint(66, 99)
-        else:
-            popt = random.randint(0, 99)
+    def set_amplitude(self, n):
+        self.amplitude = n
 
-        if speed == 'Slow':
-            sopt = random.randint(25, 100)
-            gopt = random.randint(26, 40)
-        elif speed == 'Medium':
-            sopt = random.randint(100, 175)
-            gopt = random.randint(13, 26)
-        elif speed == 'Fast':
-            sopt = random.randint(175, 250)
-            gopt = random.randint(1, 13)
-        else:  # for default: '(Random)'
-            sopt = random.randint(25, 250)
-            gopt = random.randint(1, 40)
-
-        return ['en-us', vopt, popt, sopt, gopt, ]
+    def random_voice(self):
+        self.voice = random.choice(VOICES)
+        self.ctl_voice.setCurrentText(self.voice)
+        self.pitch = random.randint(0, 99)
+        self.ctl_pitch.setValue(self.pitch)
+        self.speed = random.randint(25, 250)
+        self.ctl_speed.setValue(self.speed)
+        self.gap = random.randint(1, 40)
+        self.ctl_gap.setValue(self.gap)
 
     def speak(self):
-        opts = self.proc_vopt(self.voice, self.pitch, self.speed)
-
-        espeak("[[{}]]".format(self.line.xsampa), *opts)
+        espeak(f"[[{self.line.xsampa}]]",
+               language='en-us',
+               voice=self.voice,
+               pitch=self.pitch,
+               speed=self.speed,
+               gap=self.gap,
+               amplitude=self.amplitude)
 
 
 app = QApplication(sys.argv)
