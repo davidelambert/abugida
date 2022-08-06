@@ -8,6 +8,7 @@ pyqt5 = "*"
 playsound = "*"
 pygobject = "*"
 pyspeakng = {editable = true, path = "/home/delamb/projects/pySpeakNG"}
+pydub = "*"
 
 [dev-packages]
 autopep8 = "*"
