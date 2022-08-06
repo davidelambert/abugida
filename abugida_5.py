@@ -8,7 +8,7 @@ from string import ascii_uppercase
 from pySpeakNG import speak as espeak
 from pySpeakNG import LANGUAGES, VOICES
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFontDatabase, QFont
 from PyQt5.QtWidgets import *
 
 HERE = Path(__file__).parent.resolve()
@@ -31,23 +31,23 @@ CKEY = [{'p': 'Pit', 'b': 'Bit', 'f': 'Fat', 'v': 'Vat', },
         {'m': 'tiM', 'n': 'tiN', 'ŋ': 'tiNG', },
         {'l': 'Lump', 'r': 'Rump', 'j': 'Your', 'w': 'Wore'}]
 
-VA = {'æ': '{', 'ɑ': 'A', 'ɑː': 'A:', 'ɒ': 'Q', }
+VA = {'æ': 'a', 'ɑː': 'A:', }
 VE = {'e': 'e', 'ɛ': 'E', 'ə': '@', 'ɜ': '3', }
-VI = {'ɪ': 'I', 'i': 'i', 'iː': 'i:', }
+VI = {'ɪ': 'I', 'iː': 'i:', }
 VO = {'ɔ': 'O', 'ɔː': 'O:', }
 VU = {'ʌ': 'V', 'ʊ': 'U', 'u': 'u', 'uː': 'u:', }
-VD1 = {'eɪ': 'eI', 'əʊ': '@U', 'oʊ': 'oU', }
-VD2 = {'aɪ': 'aI', 'ɔɪ': 'OI', 'aʊ': 'aU', }
+VD1 = {'eɪ': 'eI', 'aɪ': 'aI', }
+VD2 = {'oʊ': 'oU', 'ɔɪ': 'OI', 'aʊ': 'aU', }
 VOW = VA | VE | VI | VO | VU | VD1 | VD2
 
-VKEY = [{'æ': 'trAp', 'ɑ': 'lOt', 'ɑː': 'pAlm (brit)', 'ɒ': 'clOth', },
+VKEY = [{'æ': 'trAp', 'ɑː': 'pAlm ', },
         {'e': 'drEss (brit)', 'ɛ': 'drEss (amer)',
          'ə': 'commA', 'ɜ': 'nUrse', },
-        {'ɪ': 'kIt', 'i': 'mE', 'iː': 'flEEce', },
+        {'ɪ': 'kIt', 'iː': 'flEEce', },
         {'ɔ': 'tOt', 'ɔː': 'tAUGHt', },
         {'ʌ': 'strUt', 'ʊ': 'fOOt', 'u': 'lOse', 'uː': 'lOOse', },
-        {'eɪ': 'fAce', 'əʊ': 'gOAt (brit)', 'oʊ': 'gOAt (amer)', },
-        {'aɪ': 'prIce', 'ɔɪ': 'chOIce', 'aʊ': 'mOUth', }]
+        {'eɪ': 'fAce', 'aɪ': 'prIce', },
+        {'oʊ': 'gOAt', 'ɔɪ': 'chOIce', 'aʊ': 'mOUth', }]
 
 eng_keys = ['en-029', 'en-gb', 'en-gb-scotland', 'en-gb-x-gbclan',
             'en-gb-x-gbcwmd', 'en-gb-x-rp', 'en-us', ]
@@ -107,17 +107,17 @@ class Word:
             stress = random.choice([True, False])
             if stress:
                 self.syl_xsampa[0] = "'" + self.syl_xsampa[0]
-                self.syl_ipa[0] = "'" + self.syl_ipa[0]
+                self.syl_ipa[0] = "ˈ" + self.syl_ipa[0]
         elif len(draw) > 3:
             stress = random.sample(range(len(self.syl_xsampa)), k=2)
             self.syl_xsampa[stress[0]] = "'" + self.syl_xsampa[stress[0]]
             self.syl_xsampa[stress[1]] = "," + self.syl_xsampa[stress[1]]
-            self.syl_ipa[stress[0]] = "'" + self.syl_ipa[stress[0]]
-            self.syl_ipa[stress[1]] = "," + self.syl_ipa[stress[1]]
+            self.syl_ipa[stress[0]] = "ˈ" + self.syl_ipa[stress[0]]
+            self.syl_ipa[stress[1]] = "ˌ" + self.syl_ipa[stress[1]]
         else:
             stress = random.choice(range(len(self.syl_xsampa)))
             self.syl_xsampa[stress] = "'" + self.syl_xsampa[stress]
-            self.syl_ipa[stress] = "'" + self.syl_ipa[stress]
+            self.syl_ipa[stress] = "ˈ" + self.syl_ipa[stress]
 
         # word representaions from syllables
         self.xsampa = ''.join(self.syl_xsampa)
@@ -167,6 +167,18 @@ class KeyWindow(QWidget):
         layout.setSpacing(150)
         self.setLayout(layout)
 
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-Regular.ttf'))
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-Bold.ttf'))
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-Italic.ttf'))
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-BoldItalic.ttf'))
+        font = QFont('Gentium Book Plus')
+        font.setPointSize(14)
+        self.setFont(font)
+
         cgrid = QGridLayout()
         cgrid.setHorizontalSpacing(50)
         cgrid.setVerticalSpacing(20)
@@ -200,14 +212,38 @@ class KeyWindow(QWidget):
                 exec("vgrid.addWidget(kl_v{}, {}, {})".format(ij, i + 1, j))
 
 
+class DisplayWindow(QWidget):
+    def __init__(self, text=''):
+        super().__init__()
+        self.setWindowTitle("Abugida 5: Einstürzende Zikkuraten")
+        self.setContentsMargins(50, 50, 50, 50)
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-Bold.ttf'))
+        font = QFont('Gentium Book Plus')
+        font.setBold(True)
+        font.setPointSize(72)
+        font.setWordSpacing(40)
+        self.setFont(font)
+
+        self.label = QLabel(text)
+        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setWordWrap(True)
+        self.label.setMinimumSize(1200, 400)
+        layout.addWidget(self.label)
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Abugida 5: Einstürzende Zikkuraten")
         self.setWindowIcon(QIcon(str(HERE/'img/abugida_icon.svg')))
-        self.showMaximized()
+        self.setMinimumSize(1300, 900)
         layout = QVBoxLayout()
         layout.setContentsMargins(50, 50, 50, 50)
+        layout.setSpacing(50)
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
@@ -218,9 +254,27 @@ class MainWindow(QMainWindow):
         self.log_file = None
         self.key_window = KeyWindow()
 
+        # TYPOGRAPHY =====================
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-Regular.ttf'))
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-Bold.ttf'))
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-Italic.ttf'))
+        QFontDatabase.addApplicationFont(
+            str(HERE/'gentium/GentiumBookPlus-BoldItalic.ttf'))
+
+        font = QFont('Gentium Book Plus')
+        font.setPointSize(14)
+        container.setFont(font)
+
+        disp_font = QFont('Gentium Plus')
+        disp_font.setPointSize(30)
+        disp_font.setWordSpacing(20)
+
         # LETTER SELECTION ================================
         select = QHBoxLayout()
-        select.setContentsMargins(50, 0, 50, 0)
+        select.setSpacing(50)
         layout.addLayout(select)
 
         self.vow_active = random.sample(list(VOW.values()), 3)
@@ -237,15 +291,18 @@ class MainWindow(QMainWindow):
         con_dicts = [CLAB, CDENT, CALV, CPALV, CVEGL, CNAS, CAPP]
         for lset in con_dicts:
             for ipa, xsampa in lset.items():
-                exec("self.cb_{} = QCheckBox('{}')".format(xsampa, ipa))
+                exec("self.cb_{} = QCheckBox('{}')"
+                     .format(xsampa, ipa))
                 if xsampa in self.con_active:
-                    exec("self.cb_{}.setCheckState(Qt.Checked)".format(xsampa))
+                    exec("self.cb_{}.setCheckState(Qt.Checked)"
+                         .format(xsampa))
                 exec("self.cb_{}.stateChanged.connect(self.update_con)"
                      .format(xsampa))
                 exec("cgrid.addWidget(self.cb_{}, {}, {})"
                      .format(xsampa, con_dicts.index(lset),
                              list(lset).index(ipa)))
-                exec("self.con_cb.append(self.cb_{})".format(xsampa))
+                exec("self.con_cb.append(self.cb_{})"
+                     .format(xsampa))
 
         cgroup = QGroupBox('Consonants')
         cgroup.setLayout(cgrid)
@@ -264,15 +321,18 @@ class MainWindow(QMainWindow):
         for lset in vow_dicts:
             for ipa, xsampa in lset.items():
                 xsampa = self.replace_vow(xsampa)
-                exec("self.cb_{} = QCheckBox('{}')".format(xsampa, ipa))
+                exec("self.cb_{} = QCheckBox('{}')"
+                     .format(xsampa, ipa))
                 if xsampa in self.vow_active:
-                    exec("self.cb_{}.setCheckState(Qt.Checked)".format(xsampa))
+                    exec("self.cb_{}.setCheckState(Qt.Checked)"
+                         .format(xsampa))
                 exec("self.cb_{}.stateChanged.connect(self.update_vow)"
                      .format(xsampa))
                 exec("vgrid.addWidget(self.cb_{}, {}, {})"
                      .format(xsampa, vow_dicts.index(lset),
                              list(lset).index(ipa)))
-                exec("self.vow_cb.append(self.cb_{})".format(xsampa))
+                exec("self.vow_cb.append(self.cb_{})"
+                     .format(xsampa))
 
         vgroup = QGroupBox('Vowels')
         vgroup.setLayout(vgrid)
@@ -294,20 +354,125 @@ class MainWindow(QMainWindow):
         btn_none.clicked.connect(self.select_none)
         btn_grid.addWidget(btn_none)
 
-        btn_random = QPushButton('Random (3C/3V)')
-        btn_random.setFixedSize(BW, BH)
-        btn_random.clicked.connect(self.random)
-        btn_grid.addWidget(btn_random)
+        btn_randL = QPushButton('Random (3C/3V)')
+        btn_randL.setFixedSize(BW, BH)
+        btn_randL.clicked.connect(self.random_letters)
+        btn_grid.addWidget(btn_randL)
 
         btn_key = QPushButton('Show Key')
         btn_key.setFixedSize(BW, BH)
-        btn_key.clicked.connect(self.key)
+        btn_key.clicked.connect(self.show_key)
         btn_grid.addWidget(btn_key)
 
         btn_ctlgrp = QGroupBox('Control')
         btn_ctlgrp.setLayout(btn_grid)
         btn_ctlgrp.setFixedSize(200, 400)
         select.addWidget(btn_ctlgrp)
+
+        # TEXT ======================
+        tgrp = QHBoxLayout()
+        tgrp.setAlignment(Qt.AlignCenter)
+        tgrp.setSpacing(25)
+
+        btn_new = QPushButton('New Line')
+        btn_new.setFixedSize(BW, BH)
+        btn_new.clicked.connect(self.new_line)
+        tgrp.addWidget(btn_new)
+
+        self.btn_log = QPushButton('Text Log: OFF')
+        self.btn_log.setCheckable(True)
+        self.btn_log.clicked.connect(self.toggle_log)
+        self.btn_log.setFixedSize(BW, BH)
+        tgrp.addWidget(self.btn_log)
+
+        self.btn_ext = QPushButton('Display: OFF')
+        self.btn_ext.setCheckable(True)
+        self.btn_ext.clicked.connect(self.toggle_disp)
+        self.btn_ext.setFixedSize(BW, BH)
+        tgrp.addWidget(self.btn_ext)
+
+        tbox = QGroupBox()
+        tbox.setLayout(tgrp)
+        tbox.setFixedSize(1000, 100)
+        layout.addWidget(tbox, alignment=Qt.AlignCenter)
+
+        # DISPLAY ===========================
+        self.line = Line(consonants=self.con_active, vowels=self.vow_active)
+        self.display = QLabel(self.line.ipa)
+
+        self.disp_window = DisplayWindow()  # external display window
+        self.disp_window.label.setText(self.line.ipa)
+
+        self.display.setFont(disp_font)
+        self.display.setWordWrap(True)
+        # self.display.setMinimumHeight(300)
+        self.display.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.display)
+
+        # VOICE =====================
+        vgrp = QHBoxLayout()
+        vgrp.setAlignment(Qt.AlignCenter)
+        vgrp.setSpacing(25)
+
+        voice_grid = QVBoxLayout()
+        voice_grid.setSpacing(2)
+        voice_grid.setAlignment(Qt.AlignBottom)
+        voice_opt = sorted(VOICES + ['(Random)'], key=lambda x: x.lower())
+        self.voice = '(Random)'
+        voice_lab = QLabel('Voice')
+        voice_sel = QComboBox()
+        voice_sel.addItems(voice_opt)
+        voice_sel.setCurrentText(self.voice)
+        voice_sel.setFixedWidth(BW)
+        voice_sel.currentTextChanged.connect(self.set_voice)
+        voice_grid.addWidget(voice_lab)
+        voice_grid.addWidget(voice_sel)
+        vgrp.addLayout(voice_grid)
+
+        speed_grid = QVBoxLayout()
+        speed_grid.setSpacing(2)
+        speed_grid.setAlignment(Qt.AlignBottom)
+        speed_opt = ['(Random)', 'Slow', 'Medium', 'Fast']
+        self.speed = '(Random)'
+        speed_lab = QLabel('Speed')
+        speed_sel = QComboBox()
+        speed_sel.addItems(speed_opt)
+        speed_sel.setCurrentText(self.speed)
+        speed_sel.setFixedWidth(BW)
+        speed_sel.currentTextChanged.connect(self.set_speed)
+        speed_grid.addWidget(speed_lab)
+        speed_grid.addWidget(speed_sel)
+        vgrp.addLayout(speed_grid)
+
+        pitch_grid = QVBoxLayout()
+        pitch_grid.setSpacing(2)
+        pitch_grid.setAlignment(Qt.AlignBottom)
+        pitch_opt = ['(Random)', 'Low', 'Middle', 'High']
+        self.pitch = '(Random)'
+        pitch_lab = QLabel('Pitch')
+        pitch_sel = QComboBox()
+        pitch_sel.addItems(pitch_opt)
+        pitch_sel.setCurrentText(self.pitch)
+        pitch_sel.setFixedWidth(BW)
+        pitch_sel.currentTextChanged.connect(self.set_pitch)
+        pitch_grid.addWidget(pitch_lab)
+        pitch_grid.addWidget(pitch_sel)
+        vgrp.addLayout(pitch_grid)
+
+        btn_speak = QPushButton('Speak')
+        btn_speak.setFixedSize(BW, BH)
+        btn_speak.clicked.connect(self.speak)
+        vgrp.addWidget(btn_speak, alignment=Qt.AlignBottom)
+
+        btn_sing = QPushButton('Sing')
+        btn_sing.setFixedSize(BW, BH)
+        btn_sing.clicked.connect(self.sing)
+        vgrp.addWidget(btn_sing, alignment=Qt.AlignBottom)
+
+        vbox = QGroupBox()
+        vbox.setLayout(vgrp)
+        vbox.setFixedSize(1000, 120)
+        layout.addWidget(vbox, alignment=Qt.AlignCenter)
 
     @classmethod
     def replace_vow(cls, v):
@@ -320,10 +485,16 @@ class MainWindow(QMainWindow):
         return v
 
     def update_con(self):
-        pass
+        self.con_active.clear()
+        for cb in self.con_cb:
+            if cb.isChecked():
+                self.con_active.append(CON[cb.text()])
 
     def update_vow(self):
-        pass
+        self.vow_active.clear()
+        for cb in self.vow_cb:
+            if cb.isChecked():
+                self.vow_active.append(VOW[cb.text()])
 
     def select_all(self):
         for v in list(VOW.values()):
@@ -339,7 +510,7 @@ class MainWindow(QMainWindow):
         for c in list(CON.values()):
             exec("self.cb_{}.setCheckState(Qt.Unchecked)".format(c))
 
-    def random(self):
+    def random_letters(self):
         self.select_none()
         vsamp = random.sample(list(VOW.values()), k=3)
         for v in vsamp:
@@ -349,8 +520,82 @@ class MainWindow(QMainWindow):
         for c in csamp:
             exec("self.cb_{}.setCheckState(Qt.Checked)".format(c))
 
-    def key(self):
-        self.key_window.show()
+    def show_key(self):
+        if not self.key_window.isVisible():
+            self.key_window.show()
+
+    def new_line(self):
+        self.line = Line(consonants=self.con_active, vowels=self.vow_active)
+        self.display.setText(self.line.ipa)
+        self.disp_window.label.setText(self.line.ipa)
+        if self.log_on:
+            with open(self.log_file, 'a') as f:
+                f.write(self.line.ipa + '\n')
+
+    def toggle_log(self, checked):
+        if not self.log_file:
+            self.log_file = QFileDialog.getSaveFileName(
+                self, directory=str(Path.home()))[0]
+        self.log_on = checked
+        if checked:
+            self.btn_log.setText('Text Log: ON')
+        else:
+            self.btn_log.setText('Text Log: OFF')
+
+    def toggle_disp(self, checked):
+        if checked:
+            self.btn_ext.setText('Display: ON')
+            if not self.disp_window.isVisible():
+                self.disp_window.show()
+        else:
+            self.btn_ext.setText('Display: OFF')
+            if self.disp_window.isVisible():
+                self.disp_window.hide()
+
+    def set_voice(self, s):
+        self.voice = s
+
+    def set_speed(self, s):
+        self.speed = s
+
+    def set_pitch(self, s):
+        self.pitch = s
+
+    def speak(self):
+        if self.voice == '(Random)':
+            vopt = random.choice(VOICES)
+        else:
+            vopt = self.voice
+
+        if self.speed == 'Slow':
+            sopt = random.randint(25, 100)
+            gopt = random.randint(26, 40)
+        elif self.speed == 'Medium':
+            sopt = random.randint(100, 175)
+            gopt = random.randint(13, 26)
+        elif self.speed == 'Fast':
+            sopt = random.randint(175, 250)
+            gopt = random.randint(1, 13)
+        else:  # for default: '(Random)'
+            sopt = random.randint(25, 250)
+            gopt = random.randint(1, 40)
+
+        if self.pitch == 'Low':
+            popt = random.randint(0, 33)
+        elif self.pitch == 'Middle':
+            popt = random.randint(33, 66)
+        elif self.pitch == 'High':
+            popt = random.randint(66, 99)
+        else:
+            popt = random.randint(0, 99)
+
+        print(self.line.xsampa)
+
+        espeak("[[{}]]".format(self.line.xsampa), language='en-us',
+               voice=vopt, pitch=popt, speed=sopt, gap=gopt)
+
+    def sing(self):
+        pass
 
 
 app = QApplication(sys.argv)
