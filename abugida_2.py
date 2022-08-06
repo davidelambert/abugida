@@ -1,11 +1,20 @@
 import sys
 import random
+import subprocess
+import shlex
 from pathlib import Path
 from tempfile import gettempdir
+from typing import Union
 
 from pySpeakNG import speak as espeak
 from pySpeakNG import LANGUAGES, VOICES
-from PyQt5.QtCore import Qt
+
+from PyQt5.QtCore import (Qt,
+                          QObject,
+                          QRunnable,
+                          QThreadPool,
+                          pyqtSignal,
+                          pyqtSlot)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
@@ -88,6 +97,36 @@ class Line:
         return self.phonetic
 
 
+class WorkerSignals(QObject):
+    cmd_str = pyqtSignal(str)
+    finished = pyqtSignal()
+
+
+class SpeechRunner(QRunnable):
+    def __init__(self, language, voice, pitch, speed, gap, amplitude, text):
+        super().__init__()
+        self.signals = WorkerSignals()
+        self.language = language
+        self.voice = voice
+        self.pitch = pitch
+        self.speed = speed
+        self.gap = gap,
+        self.amplitude = amplitude
+        self.text = "[[" + text + "]]"
+
+    @pyqtSlot()
+    def run(self):
+        cmd_split = shlex.split(
+            "espeak-ng -v{}+{} -p {} -s {} -g {} -a {} \"{}\""
+            .format(self.language, self.voice, self.pitch, self.speed,
+                    self.gap, self.amplitude, self.text, ))
+
+        subprocess.run(cmd_split)
+
+        self.signals.cmd_str.emit(' '.join(cmd_split))
+        self.signals.finished.emit()
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -104,6 +143,7 @@ class MainWindow(QMainWindow):
         BH = 40   # Button Height
         self.log_on = False
         self.log_file = None
+        self.threadpool = QThreadPool()
 
         # VOICE CONTROL GROUP ===============================
         voice_ctlgrp = QGridLayout()
@@ -275,13 +315,20 @@ class MainWindow(QMainWindow):
         self.ctl_gap.setValue(self.gap)
 
     def speak(self):
-        espeak(f"[[{self.line}]]",
-               language=self.language,
-               voice=self.voice,
-               pitch=self.pitch,
-               speed=self.speed,
-               gap=self.gap,
-               amplitude=self.amplitude)
+        self.runner = SpeechRunner(
+            language=self.language,
+            voice=self.voice,
+            pitch=self.pitch,
+            speed=self.speed,
+            gap=self.gap,
+            amplitude=self.amplitude,
+            text=self.line.phonetic
+        )
+        self.runner.signals.cmd_str.connect(self.print_cmd)
+        self.threadpool.start(self.runner)
+
+    def print_cmd(self, s):
+        print(s)
 
 
 app = QApplication(sys.argv)
