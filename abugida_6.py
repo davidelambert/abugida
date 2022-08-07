@@ -143,7 +143,7 @@ class ShapeCB(QCheckBox):
 class DisplayWindow(QWidget):
     def __init__(self, text=''):
         super().__init__()
-        self.setWindowTitle("Abugida 6")
+        self.setWindowTitle("Abugida 6: EYヨ Exam")
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setContentsMargins(50, 50, 50, 50)
         layout = QVBoxLayout()
@@ -166,7 +166,7 @@ class DisplayWindow(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Abugida 6")
+        self.setWindowTitle("Abugida 6: EYヨ Exam")
         self.setWindowIcon(QIcon(str(HERE/'img/abugida_icon.svg')))
         self.setMinimumSize(1300, 975)
         layout = QVBoxLayout()
