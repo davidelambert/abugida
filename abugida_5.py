@@ -289,13 +289,13 @@ class MainWindow(QMainWindow):
 
         # TYPOGRAPHY =====================
         QFontDatabase.addApplicationFont(
-            str(HERE/'gentium/GentiumBookPlus-Regular.ttf'))
+            str(HERE/'fonts/GentiumBookPlus-Regular.ttf'))
         QFontDatabase.addApplicationFont(
-            str(HERE/'gentium/GentiumBookPlus-Bold.ttf'))
+            str(HERE/'fonts/GentiumBookPlus-Bold.ttf'))
         QFontDatabase.addApplicationFont(
-            str(HERE/'gentium/GentiumBookPlus-Italic.ttf'))
+            str(HERE/'fonts/GentiumBookPlus-Italic.ttf'))
         QFontDatabase.addApplicationFont(
-            str(HERE/'gentium/GentiumBookPlus-BoldItalic.ttf'))
+            str(HERE/'fonts/GentiumBookPlus-BoldItalic.ttf'))
 
         font = QFont('Gentium Book Plus')
         font.setPointSize(14)
