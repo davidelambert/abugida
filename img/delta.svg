@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64"
+   height="64"
+   viewBox="0 0 16.933333 16.933333"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="DELTA.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#595959"
+     bordercolor="#ff00ff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="false"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     width="64px"
+     borderlayer="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-grids="false"
+     inkscape:zoom="12.609375"
+     inkscape:cx="31.960347"
+     inkscape:cy="26.210657"
+     inkscape:window-width="1920"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="8.4445065,13.778421"
+       orientation="1,0"
+       id="guide885" />
+    <sodipodi:guide
+       position="-0.63362669,8.4322284"
+       orientation="0,-1"
+       id="guide887" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient1259"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#0055d4;stop-opacity:1;"
+         offset="0"
+         id="stop1257" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient1253"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#2ca02c;stop-opacity:1;"
+         offset="0"
+         id="stop1251" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient1247"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#ffcc00;stop-opacity:1;"
+         offset="0"
+         id="stop1245" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient1241"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#d40000;stop-opacity:1;"
+         offset="0"
+         id="stop1239" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       aria-label="ᐃ"
+       id="text27588"
+       style="font-size:5.64444px;line-height:1.25;font-family:'Gentium Book Plus';-inkscape-font-specification:'Gentium Book Plus';stroke-width:0.264583">
+      <path
+         d="M 10.032999,4.7609978 H 6.9003344 L 8.4638443,2.0403776 Z M 10.840154,5.2351308 8.4638443,1.1146895 6.0931794,5.2351308 Z"
+         style="font-family:FreeSans;-inkscape-font-specification:FreeSans"
+         id="path37267" />
+    </g>
+    <g
+       aria-label="ᐃ"
+       transform="rotate(90)"
+       id="text27588-3"
+       style="font-size:5.64444px;line-height:1.25;font-family:'Gentium Book Plus';-inkscape-font-specification:'Gentium Book Plus';stroke-width:0.264583">
+      <path
+         d="M 10.032999,-12.172156 H 6.9003344 l 1.5635099,-2.72062 z m 0.807155,0.474133 -2.3763097,-4.120441 -2.3706649,4.120441 z"
+         style="font-family:FreeSans;-inkscape-font-specification:FreeSans"
+         id="path37264" />
+    </g>
+    <g
+       aria-label="ᐃ"
+       transform="scale(-1)"
+       id="text27588-0"
+       style="font-size:5.64444px;line-height:1.25;font-family:'Gentium Book Plus';-inkscape-font-specification:'Gentium Book Plus';stroke-width:0.264583">
+      <path
+         d="m -6.9003342,-12.172156 h -3.1326648 l 1.5635104,-2.72062 z m 0.8071549,0.474133 -2.3763093,-4.120441 -2.3706644,4.120441 z"
+         style="font-family:FreeSans;-inkscape-font-specification:FreeSans"
+         id="path37261" />
+    </g>
+    <g
+       aria-label="ᐃ"
+       transform="rotate(-90)"
+       id="text27588-9"
+       style="font-size:5.64444px;line-height:1.25;font-family:'Gentium Book Plus';-inkscape-font-specification:'Gentium Book Plus';stroke-width:0.264583">
+      <path
+         d="m -6.9003333,4.7609978 h -3.1326647 l 1.5635103,-2.7206202 z m 0.807155,0.474133 -2.3763094,-4.1204413 -2.3706653,4.1204413 z"
+         style="font-family:FreeSans;-inkscape-font-specification:FreeSans"
+         id="path37258" />
+    </g>
+  </g>
+</svg>
