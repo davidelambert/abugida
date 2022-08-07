@@ -143,16 +143,15 @@ class ShapeCB(QCheckBox):
 class DisplayWindow(QWidget):
     def __init__(self, text=''):
         super().__init__()
-        self.setWindowTitle("Abugida 5: Einstürzende Zikkuraten")
+        self.setWindowTitle("Abugida 6")
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setContentsMargins(50, 50, 50, 50)
         layout = QVBoxLayout()
         self.setLayout(layout)
 
         QFontDatabase.addApplicationFont(
-            str(HERE/'gentium/GentiumBookPlus-Bold.ttf'))
-        font = QFont('Gentium Book Plus')
-        font.setBold(True)
+            str(HERE/'fonts/FreeSansBold.ttf'))
+        font = QFont('Free Sans')
         font.setPointSize(72)
         font.setWordSpacing(40)
         self.setFont(font)
@@ -205,8 +204,7 @@ class MainWindow(QMainWindow):
         select.setSpacing(50)
         layout.addLayout(select)
 
-        self.active = random.sample(KEYS, 3)
-        init_cons = self.random_consonants()
+        self.active = []
 
         # CARDINALS ==========================
         card_grid = QGridLayout()
@@ -217,7 +215,7 @@ class MainWindow(QMainWindow):
         delta_icon = QPixmap(str(HERE/'img/delta.svg'))
         delta_lab = QLabel()
         delta_lab.setPixmap(delta_icon)
-        self.con_delta = init_cons[0]
+        self.con_delta = random.choice(list(CON))
         self.delta_sel = QComboBox()
         self.delta_sel.addItems(list(CON))
         self.delta_sel.setCurrentText(self.con_delta)
@@ -229,7 +227,7 @@ class MainWindow(QMainWindow):
         chevron_icon = QPixmap(str(HERE/'img/chevron.svg'))
         chevron_lab = QLabel()
         chevron_lab.setPixmap(chevron_icon)
-        self.con_chevron = init_cons[1]
+        self.con_chevron = random.choice(list(CON))
         self.chevron_sel = QComboBox()
         self.chevron_sel.addItems(list(CON))
         self.chevron_sel.setCurrentText(self.con_chevron)
@@ -241,7 +239,7 @@ class MainWindow(QMainWindow):
         arch_icon = QPixmap(str(HERE/'img/arch.svg'))
         arch_lab = QLabel()
         arch_lab.setPixmap(arch_icon)
-        self.con_arch = init_cons[2]
+        self.con_arch = random.choice(list(CON))
         self.arch_sel = QComboBox()
         self.arch_sel.addItems(list(CON))
         self.arch_sel.setCurrentText(self.con_arch)
@@ -250,8 +248,15 @@ class MainWindow(QMainWindow):
         card_grid.addWidget(arch_lab, 0, 2)
         card_grid.addWidget(self.arch_sel, 1, 2)
 
+        self.random_consonants()  # sets initial consonants
+
+        btn_randlet = QPushButton('Randomize')
+        btn_randlet.setFixedSize(BW, BH)
+        btn_randlet.clicked.connect(self.random_consonants)
+        card_grid.addWidget(btn_randlet, 0, 3, 2, 1)
+
         card_group = QGroupBox()
-        card_group.setMaximumWidth(500)
+        card_group.setFixedSize(666, 120)
         card_group.setLayout(card_grid)
         select.addWidget(card_group)
 
@@ -361,10 +366,10 @@ class MainWindow(QMainWindow):
         voice_ctlgrp.addWidget(lab_amplitude, 0, 4, alignment=Qt.AlignBottom)
         voice_ctlgrp.addWidget(self.ctl_amplitude, 1, 4)
 
-        btn_randV = QPushButton('Randomize')
-        btn_randV.setFixedSize(BW, BH)
-        btn_randV.clicked.connect(self.random_voice)
-        voice_ctlgrp.addWidget(btn_randV, 0, 5, 2, 1)
+        btn_randvoice = QPushButton('Randomize')
+        btn_randvoice.setFixedSize(BW, BH)
+        btn_randvoice.clicked.connect(self.random_voice)
+        voice_ctlgrp.addWidget(btn_randvoice, 0, 5, 2, 1)
 
         btn_speak = QPushButton('Speak')
         btn_speak.setFixedSize(BW, BH)
@@ -376,9 +381,11 @@ class MainWindow(QMainWindow):
         vbox.setFixedSize(1200, 120)
         layout.addWidget(vbox, alignment=Qt.AlignCenter)
 
-    @classmethod
-    def random_consonants(cls):
-        return random.sample(list(CON), k=3)
+    def random_consonants(self):
+        sample = random.sample(list(CON), k=3)
+        self.delta_sel.setCurrentText(sample[0])
+        self.chevron_sel.setCurrentText(sample[1])
+        self.arch_sel.setCurrentText(sample[2])
 
     def update(self):
         self.active.clear()
