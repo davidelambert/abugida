@@ -5,10 +5,8 @@ import shlex
 from pathlib import Path
 from tempfile import gettempdir
 from typing import Union
-from string import ascii_uppercase
 
-from pySpeakNG import speak as espeak
-from pySpeakNG import LANGUAGES, VOICES
+from pySpeakNG import VOICES
 
 from PyQt5.QtCore import (Qt,
                           QSize,
@@ -207,7 +205,7 @@ class MainWindow(QMainWindow):
         self.disp_cas.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.disp_cas)
 
-        # CONTROL GROUP =====================
+        # CONTROL LAYOUT GROUP =====================
         ctl_grp = QVBoxLayout()
         ctl_grp.setContentsMargins(25, 25, 25, 25)
         ctl_grp.setSpacing(32)
@@ -221,7 +219,7 @@ class MainWindow(QMainWindow):
         self.disp_ipa.setAlignment(Qt.AlignCenter)
         ctl_grp.addWidget(self.disp_ipa)
 
-        # LETTER SELECTION ==================
+        # LETTER CONTROLS ==================
         select = QHBoxLayout()
         select.setSpacing(32)
         ctl_grp.addLayout(select)
