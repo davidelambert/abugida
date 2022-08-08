@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
-   sodipodi:docname="ord_template.svg"
+   sodipodi:docname="hook.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -86,52 +86,40 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
-       x="3.8854957"
-       y="7.6164703"
-       id="text14994"><tspan
-         sodipodi:role="line"
-         id="tspan14992"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="3.8854957"
-         y="7.6164703">ᑭ</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
-       x="-13.047837"
-       y="7.6164703"
+    <g
+       aria-label="ᒋ"
+       id="text14994"
+       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583">
+      <path
+         d="m 6.9447822,4.624917 c 0,-0.5926662 -0.6208884,-1.128888 -1.3885322,-1.128888 -0.7676439,0 -1.3885323,0.705555 -1.3885323,1.2982212 V 7.6164703 H 4.6305618 V 4.9071391 c 0,-0.3951109 0.3612441,-0.948266 0.9256882,-0.948266 0.513644,0 0.9256881,0.2709331 0.9256881,0.6660439 v 0.2822221 h 0.4628441 z"
+         id="path63165" />
+    </g>
+    <g
+       aria-label="ᒋ"
+       transform="scale(-1,1)"
        id="text14994-0"
-       transform="scale(-1,1)"><tspan
-         sodipodi:role="line"
-         id="tspan14992-2"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="-13.047837"
-         y="7.6164703">ᑭ</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
-       x="-13.047837"
-       y="-9.3168621"
+       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583">
+      <path
+         d="m -9.9885507,4.624917 c 0,-0.5926662 -0.6208883,-1.128888 -1.3885323,-1.128888 -0.767644,0 -1.388532,0.705555 -1.388532,1.2982212 v 2.8222201 h 0.462844 V 4.9071391 c 0,-0.3951109 0.361244,-0.948266 0.925688,-0.948266 0.513644,0 0.925688,0.2709331 0.925688,0.6660439 v 0.2822221 h 0.4628443 z"
+         id="path63162" />
+    </g>
+    <g
+       aria-label="ᒋ"
+       transform="scale(-1)"
        id="text14994-1"
-       transform="scale(-1)"><tspan
-         sodipodi:role="line"
-         id="tspan14992-0"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="-13.047837"
-         y="-9.3168621">ᑭ</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
-       x="3.8854957"
-       y="-9.3168621"
+       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583">
+      <path
+         d="m -9.9885507,-12.308415 c 0,-0.592667 -0.6208883,-1.128888 -1.3885323,-1.128888 -0.767644,0 -1.388532,0.705555 -1.388532,1.298221 v 2.8222199 h 0.462844 v -2.7093309 c 0,-0.395111 0.361244,-0.948266 0.925688,-0.948266 0.513644,0 0.925688,0.270933 0.925688,0.666044 v 0.282222 h 0.4628443 z"
+         id="path63159" />
+    </g>
+    <g
+       aria-label="ᒋ"
+       transform="scale(1,-1)"
        id="text14994-51"
-       transform="scale(1,-1)"><tspan
-         sodipodi:role="line"
-         id="tspan14992-1"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="3.8854957"
-         y="-9.3168621">ᑭ</tspan></text>
+       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583">
+      <path
+         d="m 6.9447822,-12.308415 c 0,-0.592667 -0.6208884,-1.128888 -1.3885322,-1.128888 -0.7676439,0 -1.3885323,0.705555 -1.3885323,1.298221 v 2.8222199 h 0.4628441 v -2.7093309 c 0,-0.395111 0.3612441,-0.948266 0.9256882,-0.948266 0.513644,0 0.9256881,0.270933 0.9256881,0.666044 v 0.282222 h 0.4628441 z"
+         id="path63156" />
+    </g>
   </g>
 </svg>

@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
-   sodipodi:docname="ord_template.svg"
+   sodipodi:docname="bar.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -86,52 +86,40 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
-       x="3.8854957"
-       y="7.6164703"
-       id="text14994"><tspan
-         sodipodi:role="line"
-         id="tspan14992"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="3.8854957"
-         y="7.6164703">ᑭ</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
-       x="-13.047837"
-       y="7.6164703"
+    <g
+       aria-label="ᒥ"
+       id="text14994"
+       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583">
+      <path
+         d="M 4.1677177,3.496029 V 7.6164703 H 4.6305618 V 3.9588731 H 6.9447822 V 3.496029 Z"
+         id="path75409" />
+    </g>
+    <g
+       aria-label="ᒥ"
+       transform="scale(-1,1)"
        id="text14994-0"
-       transform="scale(-1,1)"><tspan
-         sodipodi:role="line"
-         id="tspan14992-2"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="-13.047837"
-         y="7.6164703">ᑭ</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
-       x="-13.047837"
-       y="-9.3168621"
+       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583">
+      <path
+         d="m -12.765615,3.496029 v 4.1204413 h 0.462844 V 3.9588731 h 2.3142203 V 3.496029 Z"
+         id="path75406" />
+    </g>
+    <g
+       aria-label="ᒥ"
+       transform="scale(-1)"
        id="text14994-1"
-       transform="scale(-1)"><tspan
-         sodipodi:role="line"
-         id="tspan14992-0"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="-13.047837"
-         y="-9.3168621">ᑭ</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
-       x="3.8854957"
-       y="-9.3168621"
+       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583">
+      <path
+         d="m -12.765615,-13.437303 v 4.1204409 h 0.462844 v -3.6575969 h 2.3142203 v -0.462844 z"
+         id="path75403" />
+    </g>
+    <g
+       aria-label="ᒥ"
+       transform="scale(1,-1)"
        id="text14994-51"
-       transform="scale(1,-1)"><tspan
-         sodipodi:role="line"
-         id="tspan14992-1"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="3.8854957"
-         y="-9.3168621">ᑭ</tspan></text>
+       style="font-size:5.64444px;line-height:1.25;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583">
+      <path
+         d="m 4.1677177,-13.437303 v 4.1204409 h 0.4628441 v -3.6575969 h 2.3142204 v -0.462844 z"
+         id="path75400" />
+    </g>
   </g>
 </svg>
