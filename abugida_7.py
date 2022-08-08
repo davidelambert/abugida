@@ -424,21 +424,7 @@ class MainWindow(QMainWindow):
         ctl_box.setLayout(ctl_grp)
         ctl_box.setFixedWidth(1200)
         layout.addWidget(ctl_box, alignment=Qt.AlignCenter)
-
-    def random_consonants(self):
-        sample = random.sample(list(CON), k=6)
-        self.delta_sel.setCurrentText(sample[0])
-        self.chevron_sel.setCurrentText(sample[1])
-        self.arch_sel.setCurrentText(sample[2])
-        self.loop_sel.setCurrentText(sample[3])
-        self.hook_sel.setCurrentText(sample[4])
-        self.bar_sel.setCurrentText(sample[5])
-
-    def update(self):
-        self.active.clear()
-        for cb in self.checkboxes:
-            if cb.isChecked():
-                self.active.append(cb.key)
+        # ======= END __init__() =======
 
     def set_delta(self, s):
         self.con_delta = s
@@ -457,6 +443,36 @@ class MainWindow(QMainWindow):
 
     def set_bar(self, s):
         self.con_bar = s
+
+    def set_voice(self, s):
+        self.voice = s
+
+    def set_pitch(self, n):
+        self.pitch = n
+
+    def set_speed(self, n):
+        self.speed = n
+
+    def set_gap(self, n):
+        self.gap = n
+
+    def set_amplitude(self, n):
+        self.amplitude = n
+
+    def update(self):
+        self.active.clear()
+        for cb in self.checkboxes:
+            if cb.isChecked():
+                self.active.append(cb.key)
+
+    def random_consonants(self):
+        sample = random.sample(list(CON), k=6)
+        self.delta_sel.setCurrentText(sample[0])
+        self.chevron_sel.setCurrentText(sample[1])
+        self.arch_sel.setCurrentText(sample[2])
+        self.loop_sel.setCurrentText(sample[3])
+        self.hook_sel.setCurrentText(sample[4])
+        self.bar_sel.setCurrentText(sample[5])
 
     def new_line(self):
         self.cas = line()
@@ -509,21 +525,6 @@ class MainWindow(QMainWindow):
             self.btn_ext.setText('Display: OFF')
             if self.disp_window.isVisible():
                 self.disp_window.hide()
-
-    def set_voice(self, s):
-        self.voice = s
-
-    def set_pitch(self, n):
-        self.pitch = n
-
-    def set_speed(self, n):
-        self.speed = n
-
-    def set_gap(self, n):
-        self.gap = n
-
-    def set_amplitude(self, n):
-        self.amplitude = n
 
     def random_voice(self):
         self.voice = random.choice(VOICES)
