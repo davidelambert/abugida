@@ -517,8 +517,7 @@ class MainWindow(QMainWindow):
         self.disp_window.label.setText(self.cas)
         if self.log_on:
             with open(self.log_file, 'a') as f:
-                lines = self.cas + '\n' + self.ipa + '\n'
-                f.write(lines)
+                f.write(self.cas + '\n')
 
     def translate(self):
         ipa = ''
@@ -567,6 +566,9 @@ class MainWindow(QMainWindow):
         self.disp_cas.setText(self.cas)
         self.disp_ipa.setText(self.ipa)
         self.disp_window.label.setText(self.cas)
+        if self.log_on:
+            with open(self.log_file, 'a') as f:
+                f.write(self.cas + '\n')
 
     def toggle_log(self, checked):
         if not self.log_file:
