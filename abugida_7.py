@@ -174,6 +174,9 @@ class MainWindow(QMainWindow):
 
         self.log_on = False
         self.log_file = None
+        self.cas = ''
+        self.ipa = ''
+        self.xsampa = ''
         self.threadpool = QThreadPool()
 
         # DESIGN CONSTANTS ================
@@ -444,21 +447,33 @@ class MainWindow(QMainWindow):
 
     def set_delta(self, s):
         self.con_delta = s
+        self.translate()
+        self.disp_ipa.setText(self.ipa)
 
     def set_chevron(self, s):
         self.con_chevron = s
+        self.translate()
+        self.disp_ipa.setText(self.ipa)
 
     def set_arch(self, s):
         self.con_arch = s
+        self.translate()
+        self.disp_ipa.setText(self.ipa)
 
     def set_loop(self, s):
         self.con_loop = s
+        self.translate()
+        self.disp_ipa.setText(self.ipa)
 
     def set_hook(self, s):
         self.con_hook = s
+        self.translate()
+        self.disp_ipa.setText(self.ipa)
 
     def set_bar(self, s):
         self.con_bar = s
+        self.translate()
+        self.disp_ipa.setText(self.ipa)
 
     def set_voice(self, s):
         self.voice = s
@@ -478,10 +493,8 @@ class MainWindow(QMainWindow):
     def set_ref_switch(self):
         if self.rotref_grp.checkedId():
             self.ref_switch = True
-            print('Reflectionals on.')
         else:
             self.ref_switch = False
-            print('Rotationals on.')
 
     def random_consonants(self):
         sample = random.sample(list(CON), k=6)
