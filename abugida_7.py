@@ -492,8 +492,12 @@ class MainWindow(QMainWindow):
 
     def set_ref_switch(self):
         if self.rotref_grp.checkedId():
+            if self.cas[0] in DELTA + CHEVRON + ARCH:
+                self.swap()
             self.ref_switch = True
         else:
+            if self.cas[1] in LOOP + HOOK + BAR:
+                self.swap()
             self.ref_switch = False
 
     def random_consonants(self):
@@ -548,6 +552,21 @@ class MainWindow(QMainWindow):
         self.ipa = ipa
         self.xsampa = ''.join(
             [CHARDICT[char] if char in CHARDICT else ' ' for char in ipa])
+
+    def swap(self):
+        d = dict(zip(DELTA + CHEVRON + ARCH, LOOP + HOOK + BAR))
+        output = ''
+        if self.cas[0] in DELTA + CHEVRON + ARCH:
+            for char in self.cas:
+                output += d[char] if char != ' ' else ' '
+        else:
+            for char in self.cas:
+                output += rlookup(char, d) if char != ' ' else ' '
+        self.cas = output
+        self.translate()
+        self.disp_cas.setText(self.cas)
+        self.disp_ipa.setText(self.ipa)
+        self.disp_window.label.setText(self.cas)
 
     def toggle_log(self, checked):
         if not self.log_file:
