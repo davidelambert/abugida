@@ -15,6 +15,7 @@ from PyQt5.QtCore import (Qt,
                           pyqtSlot)
 from PyQt5.QtGui import (QIcon,
                          QPixmap,
+                         QKeySequence,
                          QFontDatabase,
                          QFont)
 from PyQt5.QtWidgets import *
@@ -238,9 +239,9 @@ class MainWindow(QMainWindow):
         rot_grid.setHorizontalSpacing(50)
         rot_grid.setVerticalSpacing(5)
 
-        radio_rot = QRadioButton()
-        radio_rot.setChecked(True)
-        rot_grid.addWidget(radio_rot, 0, 0, 2, 1)
+        self.radio_rot = QRadioButton()
+        self.radio_rot.setChecked(True)
+        rot_grid.addWidget(self.radio_rot, 0, 0, 2, 1)
 
         delta_icon = QPixmap(str(HERE/'img/delta.svg'))
         delta_lab = QLabel()
@@ -289,8 +290,8 @@ class MainWindow(QMainWindow):
         ref_grid.setHorizontalSpacing(50)
         ref_grid.setVerticalSpacing(20)
 
-        radio_ref = QRadioButton()
-        ref_grid.addWidget(radio_ref, 0, 0, 2, 1)
+        self.radio_ref = QRadioButton()
+        ref_grid.addWidget(self.radio_ref, 0, 0, 2, 1)
 
         loop_icon = QPixmap(str(HERE/'img/loop.svg'))
         loop_lab = QLabel()
@@ -333,8 +334,10 @@ class MainWindow(QMainWindow):
         # radio button group control
         self.ref_switch = False  # default: rotational group
         self.rotref_grp = QButtonGroup()
-        self.rotref_grp.addButton(radio_rot, id=0)  # self.ref_switch = False
-        self.rotref_grp.addButton(radio_ref, id=1)  # self.ref_switch = True
+        # self.ref_switch = False
+        self.rotref_grp.addButton(self.radio_rot, id=0)
+        # self.ref_switch = True
+        self.rotref_grp.addButton(self.radio_ref, id=1)
         self.rotref_grp.buttonClicked.connect(self.set_ref_switch)
 
         # initial consonants and line
@@ -346,25 +349,25 @@ class MainWindow(QMainWindow):
         text_row.setAlignment(Qt.AlignCenter)
         ctl_grp.addLayout(text_row)
 
-        btn_new = QPushButton('New Line')
-        btn_new.setFixedSize(BW, BH)
-        btn_new.clicked.connect(self.new_line)
-        text_row.addWidget(btn_new)
+        self.btn_new = QPushButton('New Line')
+        self.btn_new.setFixedSize(BW, BH)
+        self.btn_new.clicked.connect(self.new_line)
+        text_row.addWidget(self.btn_new)
 
-        btn_randcon = QPushButton('Rand. Letters')
-        btn_randcon.setFixedSize(BW, BH)
-        btn_randcon.clicked.connect(self.random_consonants)
-        text_row.addWidget(btn_randcon)
+        self.btn_randcon = QPushButton('Rand. Letters')
+        self.btn_randcon.setFixedSize(BW, BH)
+        self.btn_randcon.clicked.connect(self.random_consonants)
+        text_row.addWidget(self.btn_randcon)
 
-        btn_speak = QPushButton('Speak')
-        btn_speak.setFixedSize(BW, BH)
-        btn_speak.clicked.connect(self.speak)
-        text_row.addWidget(btn_speak)
+        self.btn_speak = QPushButton('Speak')
+        self.btn_speak.setFixedSize(BW, BH)
+        self.btn_speak.clicked.connect(self.speak)
+        text_row.addWidget(self.btn_speak)
 
-        btn_randvoice = QPushButton('Rand. Voice')
-        btn_randvoice.setFixedSize(BW, BH)
-        btn_randvoice.clicked.connect(self.random_voice)
-        text_row.addWidget(btn_randvoice)
+        self.btn_randvoice = QPushButton('Rand. Voice')
+        self.btn_randvoice.setFixedSize(BW, BH)
+        self.btn_randvoice.clicked.connect(self.random_voice)
+        text_row.addWidget(self.btn_randvoice)
 
         self.btn_log = QPushButton('Text Log: OFF')
         self.btn_log.setCheckable(True)
@@ -443,6 +446,21 @@ class MainWindow(QMainWindow):
         ctl_box.setLayout(ctl_grp)
         ctl_box.setFixedWidth(1200)
         layout.addWidget(ctl_box, alignment=Qt.AlignCenter)
+
+        # KEYBOARD SHORCUTS =============
+        sc_new = QShortcut(QKeySequence('N'), self)
+        sc_new.activated.connect(self.click_new)
+        sc_randcon = QShortcut(QKeySequence('L'), self)
+        sc_randcon.activated.connect(self.click_randcon)
+        sc_randvoice = QShortcut(QKeySequence('V'), self)
+        sc_randvoice.activated.connect(self.click_randvoice)
+        sc_speak1 = QShortcut(QKeySequence('Space'), self)
+        sc_speak1.activated.connect(self.click_speak)
+        sc_speak2 = QShortcut(QKeySequence('Enter'), self)
+        sc_speak2.activated.connect(self.click_speak)
+        sc_swap = QShortcut(QKeySequence('S'), self)
+        sc_swap.activated.connect(self.click_swap)  # not a real "click"
+
         # ======= END __init__() =======
 
     def set_delta(self, s):
@@ -499,6 +517,24 @@ class MainWindow(QMainWindow):
             if self.cas[1] in LOOP + HOOK + BAR:
                 self.swap()
             self.ref_switch = False
+
+    def click_new(self):
+        self.btn_new.animateClick()
+
+    def click_randcon(self):
+        self.btn_randcon.animateClick()
+
+    def click_randvoice(self):
+        self.btn_randvoice.animateClick()
+
+    def click_speak(self):
+        self.btn_speak.animateClick()
+
+    def click_swap(self):
+        if self.rotref_grp.checkedId():  # True if reflectionals checked
+            self.radio_rot.animateClick()
+        else:
+            self.radio_ref.animateClick()
 
     def random_consonants(self):
         sample = random.sample(list(CON), k=6)
