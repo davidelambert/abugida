@@ -25,8 +25,9 @@ TMP = Path(gettempdir())
 DELTA = (u'\u1403', u'\u1405', u'\u1401', u'\u140A')
 CHEVRON = (u'\u1431', u'\u1433', u'\u142F', u'\u1438')
 ARCH = (u'\u144E', u'\u1450', u'\u144C', u'\u1455')
-KEYS = ['DELTA', 'CHEVRON', 'ARCH']
-CHARSET = dict(zip(KEYS, [eval(k) for k in KEYS]))
+LOOP = (u'\u146D', u'\u146B', u'\u146F', u'\u1472')
+HOOK = (u'\u148B', u'\u1489', u'\u148D', u'\u1490')
+BAR = (u'\u14A5', u'\u14A3', u'\u14A7', u'\u14AA')
 
 CLAB = {'p': 'p', 'b': 'b', 'f': 'f', 'v': 'v', }
 CDENT = {'θ': 'T', 'ð': 'D', }
@@ -47,32 +48,32 @@ def rlookup(val, d: dict) -> Union[str, None]:
     return None
 
 
-def word():
+def word(reflectionals=False):
+    if reflectionals:
+        shapes = [LOOP, HOOK, BAR]
+    else:
+        shapes = [DELTA, CHEVRON, ARCH]
+
     n_char = random.randint(2, 6)
     text = ''
     i = 0
     while i < n_char:
-        con = random.choice(['d', 'c', 'a'])
+        con = random.choice([0, 1, 2])
         vow = random.choice([0, 1, 2, 3])
-        if con == 'd':
-            text += DELTA[vow]
-        elif con == 'c':
-            text += CHEVRON[vow]
-        else:
-            text += ARCH[vow]
+        text += shapes[con][vow]
         i += 1
 
     return text
 
 
-def line():
+def line(reflectionals=False):
     n_words = random.randint(2, 5)
     text = ''
     i = 0
     while i < n_words - 1:
-        text = text + word() + ' '
+        text = text + word(reflectionals) + ' '
         i += 1
-    text += word()  # no space after last word
+    text += word(reflectionals)  # no space after last word
     i += 1
 
     return text
@@ -175,6 +176,12 @@ class MainWindow(QMainWindow):
         self.log_file = None
         self.threadpool = QThreadPool()
 
+        # DESIGN CONSTANTS ================
+        BW = 150    # button width
+        BH = 40     # button height
+        CSW = 400   # consonant QGroupBox width
+        CSH = 120   # consonant QGroupBox height
+
         # TYPOGRAPHY =====================
         QFontDatabase.addApplicationFont(
             str(HERE/'fonts/FreeSans.ttf'))
@@ -209,8 +216,6 @@ class MainWindow(QMainWindow):
         ctl_grp = QVBoxLayout()
         ctl_grp.setContentsMargins(25, 25, 25, 25)
         ctl_grp.setSpacing(32)
-        BW = 150    # Button Width
-        BH = 40     # Button Height
 
         # IPA DISPLAY ======================
         self.disp_ipa = QLabel()
@@ -219,17 +224,20 @@ class MainWindow(QMainWindow):
         self.disp_ipa.setAlignment(Qt.AlignCenter)
         ctl_grp.addWidget(self.disp_ipa)
 
-        # LETTER CONTROLS ==================
-        select = QHBoxLayout()
-        select.setSpacing(32)
-        ctl_grp.addLayout(select)
-        self.active = []
+        # CONSONANT SELECTION ==================
+        con_sel = QHBoxLayout()
+        con_sel.setSpacing(32)
+        ctl_grp.addLayout(con_sel)
 
         # rotationals --------------------------
         rot_grid = QGridLayout()
         rot_grid.setAlignment(Qt.AlignCenter)
         rot_grid.setHorizontalSpacing(50)
         rot_grid.setVerticalSpacing(5)
+
+        radio_rot = QRadioButton()
+        radio_rot.setChecked(True)
+        rot_grid.addWidget(radio_rot, 0, 0, 2, 1)
 
         delta_icon = QPixmap(str(HERE/'img/delta.svg'))
         delta_lab = QLabel()
@@ -240,8 +248,8 @@ class MainWindow(QMainWindow):
         self.delta_sel.setCurrentText(self.con_delta)
         self.delta_sel.setFixedWidth(60)
         self.delta_sel.currentTextChanged.connect(self.set_delta)
-        rot_grid.addWidget(delta_lab, 0, 0)
-        rot_grid.addWidget(self.delta_sel, 1, 0)
+        rot_grid.addWidget(delta_lab, 0, 1)
+        rot_grid.addWidget(self.delta_sel, 1, 1)
 
         chevron_icon = QPixmap(str(HERE/'img/chevron.svg'))
         chevron_lab = QLabel()
@@ -252,8 +260,8 @@ class MainWindow(QMainWindow):
         self.chevron_sel.setCurrentText(self.con_chevron)
         self.chevron_sel.setFixedWidth(60)
         self.chevron_sel.currentTextChanged.connect(self.set_chevron)
-        rot_grid.addWidget(chevron_lab, 0, 1)
-        rot_grid.addWidget(self.chevron_sel, 1, 1)
+        rot_grid.addWidget(chevron_lab, 0, 2)
+        rot_grid.addWidget(self.chevron_sel, 1, 2)
 
         arch_icon = QPixmap(str(HERE/'img/arch.svg'))
         arch_lab = QLabel()
@@ -264,19 +272,22 @@ class MainWindow(QMainWindow):
         self.arch_sel.setCurrentText(self.con_arch)
         self.arch_sel.setFixedWidth(60)
         self.arch_sel.currentTextChanged.connect(self.set_arch)
-        rot_grid.addWidget(arch_lab, 0, 2)
-        rot_grid.addWidget(self.arch_sel, 1, 2)
+        rot_grid.addWidget(arch_lab, 0, 3)
+        rot_grid.addWidget(self.arch_sel, 1, 3)
 
         rot_group = QGroupBox()
-        rot_group.setFixedSize(360, 120)
+        rot_group.setFixedSize(CSW, CSH)
         rot_group.setLayout(rot_grid)
-        select.addWidget(rot_group)
+        con_sel.addWidget(rot_group)
 
         # reflectionals -------------------------
         ref_grid = QGridLayout()
         ref_grid.setAlignment(Qt.AlignCenter)
         ref_grid.setHorizontalSpacing(50)
         ref_grid.setVerticalSpacing(20)
+
+        radio_ref = QRadioButton()
+        ref_grid.addWidget(radio_ref, 0, 0, 2, 1)
 
         loop_icon = QPixmap(str(HERE/'img/loop.svg'))
         loop_lab = QLabel()
@@ -286,8 +297,8 @@ class MainWindow(QMainWindow):
         self.loop_sel.addItems(list(CON))
         self.loop_sel.setFixedWidth(60)
         self.loop_sel.currentTextChanged.connect(self.set_loop)
-        ref_grid.addWidget(loop_lab, 0, 0)
-        ref_grid.addWidget(self.loop_sel, 1, 0)
+        ref_grid.addWidget(loop_lab, 0, 1)
+        ref_grid.addWidget(self.loop_sel, 1, 1)
 
         hook_icon = QPixmap(str(HERE/'img/hook.svg'))
         hook_lab = QLabel()
@@ -297,8 +308,8 @@ class MainWindow(QMainWindow):
         self.hook_sel.addItems(list(CON))
         self.hook_sel.setFixedWidth(60)
         self.hook_sel.currentTextChanged.connect(self.set_hook)
-        ref_grid.addWidget(hook_lab, 0, 1)
-        ref_grid.addWidget(self.hook_sel, 1, 1)
+        ref_grid.addWidget(hook_lab, 0, 2)
+        ref_grid.addWidget(self.hook_sel, 1, 2)
 
         bar_icon = QPixmap(str(HERE/'img/bar.svg'))
         bar_lab = QLabel()
@@ -308,13 +319,20 @@ class MainWindow(QMainWindow):
         self.bar_sel.addItems(list(CON))
         self.bar_sel.setFixedWidth(60)
         self.bar_sel.currentTextChanged.connect(self.set_bar)
-        ref_grid.addWidget(bar_lab, 0, 2)
-        ref_grid.addWidget(self.bar_sel, 1, 2)
+        ref_grid.addWidget(bar_lab, 0, 3)
+        ref_grid.addWidget(self.bar_sel, 1, 3)
 
         ref_group = QGroupBox()
-        ref_group.setFixedSize(360, 120)
+        ref_group.setFixedSize(CSW, CSH)
         ref_group.setLayout(ref_grid)
-        select.addWidget(ref_group)
+        con_sel.addWidget(ref_group)
+
+        # radio button group control
+        self.ref_switch = False  # default: rotational group
+        self.rotref_grp = QButtonGroup()
+        self.rotref_grp.addButton(radio_rot, id=0)  # self.ref_switch = False
+        self.rotref_grp.addButton(radio_ref, id=1)  # self.ref_switch = True
+        self.rotref_grp.buttonClicked.connect(self.set_ref_switch)
 
         # initial consonants and line
         self.random_consonants()
@@ -457,11 +475,13 @@ class MainWindow(QMainWindow):
     def set_amplitude(self, n):
         self.amplitude = n
 
-    def update(self):
-        self.active.clear()
-        for cb in self.checkboxes:
-            if cb.isChecked():
-                self.active.append(cb.key)
+    def set_ref_switch(self):
+        if self.rotref_grp.checkedId():
+            self.ref_switch = True
+            print('Reflectionals on.')
+        else:
+            self.ref_switch = False
+            print('Rotationals on.')
 
     def random_consonants(self):
         sample = random.sample(list(CON), k=6)
@@ -473,7 +493,7 @@ class MainWindow(QMainWindow):
         self.bar_sel.setCurrentText(sample[5])
 
     def new_line(self):
-        self.cas = line()
+        self.cas = line(self.ref_switch)
         self.translate()
         self.disp_cas.setText(self.cas)
         self.disp_ipa.setText(self.ipa)
@@ -497,6 +517,18 @@ class MainWindow(QMainWindow):
             elif char in ARCH:
                 con = self.con_arch
                 vow = list(VOW)[ARCH.index(char)]
+                ipa = ipa + con + vow
+            elif char in LOOP:
+                con = self.con_loop
+                vow = list(VOW)[LOOP.index(char)]
+                ipa = ipa + con + vow
+            elif char in HOOK:
+                con = self.con_hook
+                vow = list(VOW)[HOOK.index(char)]
+                ipa = ipa + con + vow
+            elif char in BAR:
+                con = self.con_bar
+                vow = list(VOW)[BAR.index(char)]
                 ipa = ipa + con + vow
             else:
                 ipa = ipa + ' '
