@@ -297,9 +297,11 @@ class MainWindow(QMainWindow):
         rot_grid.setHorizontalSpacing(50)
         rot_grid.setVerticalSpacing(5)
 
-        self.radio_rot = QRadioButton()
+        self.radio_rot = QRadioButton('Rotational')
         self.radio_rot.setChecked(True)
-        rot_grid.addWidget(self.radio_rot, 0, 0, 2, 1)
+        self.radio_rot.setFixedHeight(50)
+        rot_grid.addWidget(self.radio_rot, 0, 0, 1, 3,
+                           alignment=Qt.AlignCenter)
 
         delta_icon = QPixmap(str(HERE/'img/delta.svg'))
         delta_lab = QLabel()
@@ -310,8 +312,8 @@ class MainWindow(QMainWindow):
         self.delta_sel.setCurrentText(self.con_delta)
         self.delta_sel.setFixedWidth(60)
         self.delta_sel.currentTextChanged.connect(self.set_delta)
-        rot_grid.addWidget(delta_lab, 0, 1)
-        rot_grid.addWidget(self.delta_sel, 1, 1)
+        rot_grid.addWidget(delta_lab, 1, 0)
+        rot_grid.addWidget(self.delta_sel, 2, 0)
 
         chevron_icon = QPixmap(str(HERE/'img/chevron.svg'))
         chevron_lab = QLabel()
@@ -322,8 +324,8 @@ class MainWindow(QMainWindow):
         self.chevron_sel.setCurrentText(self.con_chevron)
         self.chevron_sel.setFixedWidth(60)
         self.chevron_sel.currentTextChanged.connect(self.set_chevron)
-        rot_grid.addWidget(chevron_lab, 0, 2)
-        rot_grid.addWidget(self.chevron_sel, 1, 2)
+        rot_grid.addWidget(chevron_lab, 1, 1)
+        rot_grid.addWidget(self.chevron_sel, 2, 1)
 
         arch_icon = QPixmap(str(HERE/'img/arch.svg'))
         arch_lab = QLabel()
@@ -334,11 +336,10 @@ class MainWindow(QMainWindow):
         self.arch_sel.setCurrentText(self.con_arch)
         self.arch_sel.setFixedWidth(60)
         self.arch_sel.currentTextChanged.connect(self.set_arch)
-        rot_grid.addWidget(arch_lab, 0, 3)
-        rot_grid.addWidget(self.arch_sel, 1, 3)
+        rot_grid.addWidget(arch_lab, 1, 2)
+        rot_grid.addWidget(self.arch_sel, 2, 2)
 
         rot_group = QGroupBox()
-        rot_group.setFixedSize(CSW, CSH)
         rot_group.setLayout(rot_grid)
         con_sel.addWidget(rot_group)
 
@@ -346,10 +347,12 @@ class MainWindow(QMainWindow):
         ref_grid = QGridLayout()
         ref_grid.setAlignment(Qt.AlignCenter)
         ref_grid.setHorizontalSpacing(50)
-        ref_grid.setVerticalSpacing(20)
+        ref_grid.setVerticalSpacing(5)
 
-        self.radio_ref = QRadioButton()
-        ref_grid.addWidget(self.radio_ref, 0, 0, 2, 1)
+        self.radio_ref = QRadioButton('Reflectional')
+        self.radio_ref.setFixedHeight(50)
+        ref_grid.addWidget(self.radio_ref, 0, 0, 1, 3,
+                           alignment=Qt.AlignCenter)
 
         loop_icon = QPixmap(str(HERE/'img/loop.svg'))
         loop_lab = QLabel()
@@ -359,8 +362,8 @@ class MainWindow(QMainWindow):
         self.loop_sel.addItems(list(CON))
         self.loop_sel.setFixedWidth(60)
         self.loop_sel.currentTextChanged.connect(self.set_loop)
-        ref_grid.addWidget(loop_lab, 0, 1)
-        ref_grid.addWidget(self.loop_sel, 1, 1)
+        ref_grid.addWidget(loop_lab, 1, 0)
+        ref_grid.addWidget(self.loop_sel, 2, 0)
 
         hook_icon = QPixmap(str(HERE/'img/hook.svg'))
         hook_lab = QLabel()
@@ -370,8 +373,8 @@ class MainWindow(QMainWindow):
         self.hook_sel.addItems(list(CON))
         self.hook_sel.setFixedWidth(60)
         self.hook_sel.currentTextChanged.connect(self.set_hook)
-        ref_grid.addWidget(hook_lab, 0, 2)
-        ref_grid.addWidget(self.hook_sel, 1, 2)
+        ref_grid.addWidget(hook_lab, 1, 1)
+        ref_grid.addWidget(self.hook_sel, 2, 1)
 
         bar_icon = QPixmap(str(HERE/'img/bar.svg'))
         bar_lab = QLabel()
@@ -381,21 +384,18 @@ class MainWindow(QMainWindow):
         self.bar_sel.addItems(list(CON))
         self.bar_sel.setFixedWidth(60)
         self.bar_sel.currentTextChanged.connect(self.set_bar)
-        ref_grid.addWidget(bar_lab, 0, 3)
-        ref_grid.addWidget(self.bar_sel, 1, 3)
+        ref_grid.addWidget(bar_lab, 1, 2)
+        ref_grid.addWidget(self.bar_sel, 2, 2)
 
         ref_group = QGroupBox()
-        ref_group.setFixedSize(CSW, CSH)
         ref_group.setLayout(ref_grid)
         con_sel.addWidget(ref_group)
 
         # radio button group control
         self.ref_switch = False  # default: rotational group
         self.rotref_grp = QButtonGroup()
-        # self.ref_switch = False
-        self.rotref_grp.addButton(self.radio_rot, id=0)
-        # self.ref_switch = True
-        self.rotref_grp.addButton(self.radio_ref, id=1)
+        self.rotref_grp.addButton(self.radio_rot, id=0)  # ref_switch = False
+        self.rotref_grp.addButton(self.radio_ref, id=1)  # ref_switch = True
         self.rotref_grp.buttonClicked.connect(self.set_ref_switch)
 
         # initial consonants and line
