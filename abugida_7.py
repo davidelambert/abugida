@@ -205,6 +205,7 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
+        self.setStatusBar(QStatusBar(self))
 
         self.log_on = False
         self.log_file = None
@@ -216,8 +217,6 @@ class MainWindow(QMainWindow):
         # DESIGN CONSTANTS ================
         BW = 150    # button width
         BH = 40     # button height
-        CSW = 400   # consonant QGroupBox width
-        CSH = 120   # consonant QGroupBox height
 
         # TYPOGRAPHY =====================
         QFontDatabase.addApplicationFont(
@@ -267,17 +266,20 @@ class MainWindow(QMainWindow):
         ctl_grp.addLayout(con_sel)
 
         # MODE SELECTION ====================
-        self.mode = ''
+        self.mode = 'syl'
         self.radio_syl = QRadioButton('Syllable')
+        self.radio_syl.setChecked(True)
+        self.radio_syl.setStatusTip('(S) Generate single syllables/characters')
         self.radio_word = QRadioButton('Word')
+        self.radio_word.setStatusTip('(W) Generate words of up to 6 syllables')
         self.radio_line = QRadioButton('Line')
-        self.radio_line.setChecked(True)
+        self.radio_line.setStatusTip('(L) Generate lines of up to 5 words')
         mode_grid = QVBoxLayout()
         mode_grid.addWidget(self.radio_syl)
         mode_grid.addWidget(self.radio_word)
         mode_grid.addWidget(self.radio_line)
         mode_box = QGroupBox()
-        mode_box.setFixedWidth(120)
+        mode_box.setFixedWidth(BW)
         mode_box.setLayout(mode_grid)
         con_sel.addWidget(mode_box)
 
@@ -294,6 +296,7 @@ class MainWindow(QMainWindow):
         rot_grid.setVerticalSpacing(5)
 
         self.radio_rot = QRadioButton('Rotational')
+        self.radio_rot.setStatusTip('(X) to switch with Reflectionals')
         self.radio_rot.setChecked(True)
         self.radio_rot.setFixedHeight(50)
         rot_grid.addWidget(self.radio_rot, 0, 0, 1, 3,
@@ -305,6 +308,7 @@ class MainWindow(QMainWindow):
         self.con_delta = random.choice(list(CON))
         self.delta_sel = QComboBox()
         self.delta_sel.addItems(list(CON))
+        self.delta_sel.setStatusTip('Set consonant for this shape')
         self.delta_sel.setCurrentText(self.con_delta)
         self.delta_sel.setFixedWidth(60)
         self.delta_sel.currentTextChanged.connect(self.set_delta)
@@ -317,6 +321,7 @@ class MainWindow(QMainWindow):
         self.con_chevron = random.choice(list(CON))
         self.chevron_sel = QComboBox()
         self.chevron_sel.addItems(list(CON))
+        self.chevron_sel.setStatusTip('Set consonant for this shape')
         self.chevron_sel.setCurrentText(self.con_chevron)
         self.chevron_sel.setFixedWidth(60)
         self.chevron_sel.currentTextChanged.connect(self.set_chevron)
@@ -329,6 +334,7 @@ class MainWindow(QMainWindow):
         self.con_arch = random.choice(list(CON))
         self.arch_sel = QComboBox()
         self.arch_sel.addItems(list(CON))
+        self.arch_sel.setStatusTip('Set consonant for this shape')
         self.arch_sel.setCurrentText(self.con_arch)
         self.arch_sel.setFixedWidth(60)
         self.arch_sel.currentTextChanged.connect(self.set_arch)
@@ -346,6 +352,7 @@ class MainWindow(QMainWindow):
         ref_grid.setVerticalSpacing(5)
 
         self.radio_ref = QRadioButton('Reflectional')
+        self.radio_ref.setStatusTip('(X) to switch with Rotationals')
         self.radio_ref.setFixedHeight(50)
         ref_grid.addWidget(self.radio_ref, 0, 0, 1, 3,
                            alignment=Qt.AlignCenter)
@@ -356,6 +363,7 @@ class MainWindow(QMainWindow):
         self.con_loop = ''
         self.loop_sel = QComboBox()
         self.loop_sel.addItems(list(CON))
+        self.loop_sel.setStatusTip('Set consonant for this shape')
         self.loop_sel.setFixedWidth(60)
         self.loop_sel.currentTextChanged.connect(self.set_loop)
         ref_grid.addWidget(loop_lab, 1, 0)
@@ -367,6 +375,7 @@ class MainWindow(QMainWindow):
         self.con_hook = ''
         self.hook_sel = QComboBox()
         self.hook_sel.addItems(list(CON))
+        self.hook_sel.setStatusTip('Set consonant for this shape')
         self.hook_sel.setFixedWidth(60)
         self.hook_sel.currentTextChanged.connect(self.set_hook)
         ref_grid.addWidget(hook_lab, 1, 1)
@@ -378,6 +387,7 @@ class MainWindow(QMainWindow):
         self.con_bar = ''
         self.bar_sel = QComboBox()
         self.bar_sel.addItems(list(CON))
+        self.bar_sel.setStatusTip('Set consonant for this shape')
         self.bar_sel.setFixedWidth(60)
         self.bar_sel.currentTextChanged.connect(self.set_bar)
         ref_grid.addWidget(bar_lab, 1, 2)
@@ -404,32 +414,40 @@ class MainWindow(QMainWindow):
         ctl_grp.addLayout(text_row)
 
         self.btn_gen = QPushButton('Generate')
+        self.btn_gen.setStatusTip('(G) Generate new syllable/word/line')
         self.btn_gen.setFixedSize(BW, BH)
         self.btn_gen.clicked.connect(self.generate)
         text_row.addWidget(self.btn_gen)
 
         self.btn_randcon = QPushButton('Rand. Consonants')
+        self.btn_randcon.setStatusTip(
+            '(C) Randomize consonants for all shapes')
         self.btn_randcon.setFixedSize(BW, BH)
         self.btn_randcon.clicked.connect(self.random_consonants)
         text_row.addWidget(self.btn_randcon)
 
         self.btn_speak = QPushButton('Speak')
+        self.btn_speak.setStatusTip(
+            '(Space) Speak current phrase using voice settings')
         self.btn_speak.setFixedSize(BW, BH)
         self.btn_speak.clicked.connect(self.speak)
         text_row.addWidget(self.btn_speak)
 
         self.btn_randvoice = QPushButton('Rand. Voice')
+        self.btn_randvoice.setStatusTip('(V) Randomize voice settings')
         self.btn_randvoice.setFixedSize(BW, BH)
         self.btn_randvoice.clicked.connect(self.random_voice)
         text_row.addWidget(self.btn_randvoice)
 
         self.btn_log = QPushButton('Text Log: OFF')
+        self.btn_log.setStatusTip('Save syllabic phrases to text file')
         self.btn_log.setCheckable(True)
         self.btn_log.clicked.connect(self.toggle_log)
         self.btn_log.setFixedSize(BW, BH)
         text_row.addWidget(self.btn_log)
 
         self.btn_ext = QPushButton('Display: OFF')
+        self.btn_ext.setStatusTip('Show/Hide external phrase display window')
         self.btn_ext.setCheckable(True)
         self.btn_ext.clicked.connect(self.toggle_disp)
         self.btn_ext.setFixedSize(BW, BH)
@@ -439,60 +457,71 @@ class MainWindow(QMainWindow):
         voice_row = QGridLayout()
         voice_row.setAlignment(Qt.AlignCenter)
         voice_row.setHorizontalSpacing(50)
-        voice_row.setVerticalSpacing(0)
+        voice_row.setVerticalSpacing(5)
         ctl_grp.addLayout(voice_row)
 
         self.voice = random.choice(VOICES)
         self.ctl_voice = QComboBox()
         self.ctl_voice.addItems(sorted(VOICES, key=lambda x: x.lower()))
+        self.ctl_voice.setStatusTip('Speech synthesizer voice model')
         self.ctl_voice.setCurrentText(self.voice)
         self.ctl_voice.setFixedWidth(BW)
         self.ctl_voice.currentTextChanged.connect(self.set_voice)
         lab_voice = QLabel('Voice')
+        lab_voice.setStatusTip(self.ctl_voice.statusTip())
         voice_row.addWidget(lab_voice, 0, 0, alignment=Qt.AlignBottom)
         voice_row.addWidget(self.ctl_voice, 1, 0)
 
         self.pitch = random.randint(0, 99)
         self.ctl_pitch = QSlider()
         self.ctl_pitch.setRange(0, 99)
+        self.ctl_pitch.setStatusTip(
+            'Pitch adjustment from voice model default')
         self.ctl_pitch.setValue(self.pitch)
         self.ctl_pitch.setOrientation(Qt.Horizontal)
         self.ctl_pitch.setFixedWidth(BW)
         self.ctl_pitch.valueChanged.connect(self.set_pitch)
         lab_pitch = QLabel('Pitch')
+        lab_pitch.setStatusTip(self.ctl_pitch.statusTip())
         voice_row.addWidget(lab_pitch, 0, 1, alignment=Qt.AlignBottom)
         voice_row.addWidget(self.ctl_pitch, 1, 1)
 
         self.speed = random.randint(25, 250)
         self.ctl_speed = QSlider()
         self.ctl_speed.setRange(25, 250)
+        self.ctl_speed.setStatusTip('Speed in words per minute, 25-250')
         self.ctl_speed.setValue(self.speed)
         self.ctl_speed.setOrientation(Qt.Horizontal)
         self.ctl_speed.setFixedWidth(BW)
         self.ctl_speed.valueChanged.connect(self.set_speed)
         lab_speed = QLabel('Speed')
+        lab_speed.setStatusTip(self.ctl_speed.statusTip())
         voice_row.addWidget(lab_speed, 0, 2, alignment=Qt.AlignBottom)
         voice_row.addWidget(self.ctl_speed, 1, 2)
 
         self.gap = random.randint(1, 40)
         self.ctl_gap = QSlider()
         self.ctl_gap.setRange(1, 40)
+        self.ctl_gap.setStatusTip('Word gap. Has little effect.')
         self.ctl_gap.setValue(self.gap)
         self.ctl_gap.setOrientation(Qt.Horizontal)
         self.ctl_gap.setFixedWidth(BW)
         self.ctl_gap.valueChanged.connect(self.set_gap)
         lab_gap = QLabel('Gap')
+        lab_gap.setStatusTip(self.ctl_gap.statusTip())
         voice_row.addWidget(lab_gap, 0, 3, alignment=Qt.AlignBottom)
         voice_row.addWidget(self.ctl_gap, 1, 3)
 
         self.amplitude = 50
         self.ctl_amplitude = QSlider()
         self.ctl_amplitude.setRange(0, 75)
+        self.ctl_amplitude.setStatusTip('Speech amplitude. Not randomized.')
         self.ctl_amplitude.setValue(self.amplitude)
         self.ctl_amplitude.setOrientation(Qt.Horizontal)
         self.ctl_amplitude.setFixedWidth(BW)
         self.ctl_amplitude.valueChanged.connect(self.set_amplitude)
         lab_amplitude = QLabel('Volume')
+        lab_amplitude.setStatusTip(self.ctl_amplitude.statusTip())
         voice_row.addWidget(lab_amplitude, 0, 4, alignment=Qt.AlignBottom)
         voice_row.addWidget(self.ctl_amplitude, 1, 4)
 
