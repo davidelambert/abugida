@@ -21,11 +21,8 @@ import random
 import subprocess
 import shlex
 from pathlib import Path
-from tempfile import gettempdir
-from typing import Union
 
 from PyQt5.QtCore import (Qt,
-                          QSize,
                           QRunnable,
                           QThreadPool,
                           pyqtSlot)
@@ -37,7 +34,6 @@ from PyQt5.QtGui import (QIcon,
 from PyQt5.QtWidgets import *
 
 HERE = Path(__file__).parent.resolve()
-TMP = Path(gettempdir())
 
 DELTA = (u'\u1403', u'\u1405', u'\u1401', u'\u140A')
 CHEVRON = (u'\u1431', u'\u1433', u'\u142F', u'\u1438')
@@ -71,7 +67,7 @@ VOICES = ["Andrea", "Annie", "Antonio", "Auntie", "Belinda", "Boris", "Denis",
           "m8", "f1", "croak", "m1", "grandma"]
 
 
-def rlookup(val, d: dict) -> Union[str, None]:
+def rlookup(val, d):
     keys = [k for k, v in d.items() if v == val]
     if keys:
         return keys[0]
