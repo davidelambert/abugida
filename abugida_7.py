@@ -55,7 +55,7 @@ CNAS = {'m': 'm', 'n': 'n', }
 CAPP = {'l': 'l', 'r': 'r', 'j': 'j', 'w': 'w', }
 CON = CLAB | CDENT | CALV | CPALV | CVEGL | CNAS | CAPP
 VOW = {'i': 'i', 'o': 'o', 'e': 'e', 'a': 'a', }
-CHARDICT = CON | VOW
+IPADICT = CON | VOW
 
 VOICES = ["Andrea", "Annie", "Antonio", "Auntie", "Belinda", "Boris", "Denis",
           "Diogo", "Ed", "Gene", "Gene2", "Henrique", "Hugo", "Iven", "Iven2",
@@ -76,6 +76,14 @@ def rlookup(val, d: dict) -> Union[str, None]:
     if keys:
         return keys[0]
     return None
+
+
+def syl(reflectionals=False):
+    if reflectionals:
+        shapes = LOOP + HOOK + BAR
+    else:
+        shapes = DELTA + CHEVRON + ARCH
+    return random.choice(shapes)
 
 
 def word(reflectionals=False):
@@ -262,6 +270,27 @@ class MainWindow(QMainWindow):
         con_sel.setSpacing(32)
         ctl_grp.addLayout(con_sel)
 
+        # MODE SELECTION ====================
+        self.mode = ''
+        self.radio_syl = QRadioButton('Syllable')
+        self.radio_word = QRadioButton('Word')
+        self.radio_line = QRadioButton('Line')
+        self.radio_line.setChecked(True)
+        mode_grid = QVBoxLayout()
+        mode_grid.addWidget(self.radio_syl)
+        mode_grid.addWidget(self.radio_word)
+        mode_grid.addWidget(self.radio_line)
+        mode_box = QGroupBox()
+        mode_box.setFixedWidth(120)
+        mode_box.setLayout(mode_grid)
+        con_sel.addWidget(mode_box)
+
+        self.mode_grp = QButtonGroup()
+        self.mode_grp.addButton(self.radio_syl, id=1)
+        self.mode_grp.addButton(self.radio_word, id=2)
+        self.mode_grp.addButton(self.radio_line, id=3)
+        self.mode_grp.buttonClicked.connect(self.set_mode)
+
         # rotationals --------------------------
         rot_grid = QGridLayout()
         rot_grid.setAlignment(Qt.AlignCenter)
@@ -371,19 +400,19 @@ class MainWindow(QMainWindow):
 
         # initial consonants and line
         self.random_consonants()
-        self.new_line()
+        self.generate()
 
         # TEXT CONTROLS =============================
         text_row = QHBoxLayout()
         text_row.setAlignment(Qt.AlignCenter)
         ctl_grp.addLayout(text_row)
 
-        self.btn_new = QPushButton('New Line')
-        self.btn_new.setFixedSize(BW, BH)
-        self.btn_new.clicked.connect(self.new_line)
-        text_row.addWidget(self.btn_new)
+        self.btn_gen = QPushButton('Generate')
+        self.btn_gen.setFixedSize(BW, BH)
+        self.btn_gen.clicked.connect(self.generate)
+        text_row.addWidget(self.btn_gen)
 
-        self.btn_randcon = QPushButton('Rand. Letters')
+        self.btn_randcon = QPushButton('Rand. Consonants')
         self.btn_randcon.setFixedSize(BW, BH)
         self.btn_randcon.clicked.connect(self.random_consonants)
         text_row.addWidget(self.btn_randcon)
@@ -477,17 +506,21 @@ class MainWindow(QMainWindow):
         layout.addWidget(ctl_box, alignment=Qt.AlignCenter)
 
         # KEYBOARD SHORCUTS =============
-        sc_new = QShortcut(QKeySequence('N'), self)
-        sc_new.activated.connect(self.click_new)
-        sc_randcon = QShortcut(QKeySequence('L'), self)
+        sc_syl = QShortcut(QKeySequence('S'), self)
+        sc_syl.activated.connect(self.click_syl)
+        sc_word = QShortcut(QKeySequence('W'), self)
+        sc_word.activated.connect(self.click_word)
+        sc_line = QShortcut(QKeySequence('L'), self)
+        sc_line.activated.connect(self.click_line)
+        sc_gen = QShortcut(QKeySequence('G'), self)
+        sc_gen.activated.connect(self.click_gen)
+        sc_randcon = QShortcut(QKeySequence('C'), self)
         sc_randcon.activated.connect(self.click_randcon)
         sc_randvoice = QShortcut(QKeySequence('V'), self)
         sc_randvoice.activated.connect(self.click_randvoice)
-        sc_speak1 = QShortcut(QKeySequence('Space'), self)
-        sc_speak1.activated.connect(self.click_speak)
-        sc_speak2 = QShortcut(QKeySequence('Return'), self)
-        sc_speak2.activated.connect(self.click_speak)
-        sc_swap = QShortcut(QKeySequence('S'), self)
+        sc_speak = QShortcut(QKeySequence('Space'), self)
+        sc_speak.activated.connect(self.click_speak)
+        sc_swap = QShortcut(QKeySequence('X'), self)
         sc_swap.activated.connect(self.click_swap)  # not a real "click"
 
         # ======= END __init__() =======
@@ -537,18 +570,35 @@ class MainWindow(QMainWindow):
     def set_amplitude(self, n):
         self.amplitude = n
 
+    def set_mode(self):
+        if self.mode_grp.checkedId() == 1:
+            self.mode = 'syl'
+        elif self.mode_grp.checkedId() == 2:
+            self.mode = 'word'
+        else:
+            self.mode = 'line'
+
     def set_ref_switch(self):
         if self.rotref_grp.checkedId():
             if self.cas[0] in DELTA + CHEVRON + ARCH:
                 self.swap()
             self.ref_switch = True
         else:
-            if self.cas[1] in LOOP + HOOK + BAR:
+            if self.cas[0] in LOOP + HOOK + BAR:
                 self.swap()
             self.ref_switch = False
 
-    def click_new(self):
-        self.btn_new.animateClick()
+    def click_syl(self):
+        self.radio_syl.animateClick()
+
+    def click_word(self):
+        self.radio_word.animateClick()
+
+    def click_line(self):
+        self.radio_line.animateClick()
+
+    def click_gen(self):
+        self.btn_gen.animateClick()
 
     def click_randcon(self):
         self.btn_randcon.animateClick()
@@ -574,8 +624,13 @@ class MainWindow(QMainWindow):
         self.hook_sel.setCurrentText(sample[4])
         self.bar_sel.setCurrentText(sample[5])
 
-    def new_line(self):
-        self.cas = line(self.ref_switch)
+    def generate(self):
+        if self.mode == 'syl':
+            self.cas = syl(self.ref_switch)
+        elif self.mode == 'word':
+            self.cas = word(self.ref_switch)
+        else:
+            self.cas = line(self.ref_switch)
         self.translate()
         self.disp_cas.setText(self.cas)
         self.disp_ipa.setText(self.ipa)
@@ -615,7 +670,7 @@ class MainWindow(QMainWindow):
                 ipa = ipa + ' '
         self.ipa = ipa
         self.xsampa = ''.join(
-            [CHARDICT[char] if char in CHARDICT else ' ' for char in ipa])
+            [IPADICT[char] if char in IPADICT else ' ' for char in ipa])
 
     def swap(self):
         d = dict(zip(DELTA + CHEVRON + ARCH, LOOP + HOOK + BAR))
