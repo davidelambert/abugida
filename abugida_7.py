@@ -24,8 +24,6 @@ from pathlib import Path
 from tempfile import gettempdir
 from typing import Union
 
-from pySpeakNG import VOICES
-
 from PyQt5.QtCore import (Qt,
                           QSize,
                           QRunnable,
@@ -58,6 +56,19 @@ CAPP = {'l': 'l', 'r': 'r', 'j': 'j', 'w': 'w', }
 CON = CLAB | CDENT | CALV | CPALV | CVEGL | CNAS | CAPP
 VOW = {'i': 'i', 'o': 'o', 'e': 'e', 'a': 'a', }
 CHARDICT = CON | VOW
+
+VOICES = ["Andrea", "Annie", "Antonio", "Auntie", "Belinda", "Boris", "Denis",
+          "Diogo", "Ed", "Gene", "Gene2", "Henrique", "Hugo", "Iven", "Iven2",
+          "Iven3", "Jacky", "John", "Kaukovalta", "Mario", "Max", "Michael",
+          "Michel", "Miguel", "Mr_Serious", "Nguyen", "Pablo", "Pablo2",
+          "Paul", "Pedro", "Quincy", "RicishayMax", "RicishayMax2",
+          "RicishayMax3", "Rob", "Robert", "Robosoft3", "Robosoft4",
+          "Robosoft5", "Robosoft6", "Robosoft7", "Robosoft8", "Steph",
+          "Steph2", "Steph3", "Storm", "Tweaky", "Zac", "anika", "anikaRobot",
+          "fast_test", "f2", "f3", "f4", "f5", "female_whisper", "grandpa",
+          "klatt", "klatt2", "klatt3", "klatt4", "m2", "m3", "m4", "m5", "m6",
+          "m7", "norbert", "sandro", "shelby", "travis", "victor", "whisper",
+          "m8", "f1", "croak", "m1", "grandma"]
 
 
 def rlookup(val, d: dict) -> Union[str, None]:
@@ -474,7 +485,7 @@ class MainWindow(QMainWindow):
         sc_randvoice.activated.connect(self.click_randvoice)
         sc_speak1 = QShortcut(QKeySequence('Space'), self)
         sc_speak1.activated.connect(self.click_speak)
-        sc_speak2 = QShortcut(QKeySequence('Enter'), self)
+        sc_speak2 = QShortcut(QKeySequence('Return'), self)
         sc_speak2.activated.connect(self.click_speak)
         sc_swap = QShortcut(QKeySequence('S'), self)
         sc_swap.activated.connect(self.click_swap)  # not a real "click"
