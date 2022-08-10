@@ -180,9 +180,10 @@ class DisplayWindow(QWidget):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        QFontDatabase.addApplicationFont(
-            str(HERE/'fonts/FreeSansBold.ttf'))
-        font = QFont('Free Sans')
+        font_id = QFontDatabase.addApplicationFont(
+            str(HERE/'fonts/FreeSans.ttf'))
+        font_fam = QFontDatabase.applicationFontFamilies(font_id)[0]
+        font = QFont(font_fam)
         font.setPointSize(144)
         font.setWordSpacing(40)
         self.setFont(font)
@@ -219,23 +220,18 @@ class MainWindow(QMainWindow):
         BH = 40     # button height
 
         # TYPOGRAPHY =====================
-        QFontDatabase.addApplicationFont(
+        font_id = QFontDatabase.addApplicationFont(
             str(HERE/'fonts/FreeSans.ttf'))
-        QFontDatabase.addApplicationFont(
-            str(HERE/'fonts/FreeSansBold.ttf'))
-        QFontDatabase.addApplicationFont(
-            str(HERE/'fonts/FreeSansOblique.ttf'))
-        QFontDatabase.addApplicationFont(
-            str(HERE/'fonts/FreeSansBoldOblique.ttf'))
+        font_fam = QFontDatabase.applicationFontFamilies(font_id)[0]
 
-        font = QFont('Free Sans')
+        font = QFont(font_fam)
         container.setFont(font)
 
-        disp_font = QFont('Free Sans')
+        disp_font = QFont(font_fam)
         disp_font.setPointSize(72)
         disp_font.setWordSpacing(40)
 
-        ipa_font = QFont('Free Sans')
+        ipa_font = QFont(font_fam)
         ipa_font.setPointSize(16)
         ipa_font.setWordSpacing(20)
 
