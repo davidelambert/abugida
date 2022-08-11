@@ -63,7 +63,7 @@ VOICES = ["Andrea", "Annie", "Antonio", "Auntie", "Belinda", "Boris", "Denis",
           "Steph2", "Steph3", "Storm", "Tweaky", "Zac", "anika", "anikaRobot",
           "fast_test", "f2", "f3", "f4", "f5", "female_whisper", "grandpa",
           "klatt", "klatt2", "klatt3", "klatt4", "m2", "m3", "m4", "m5", "m6",
-          "m7", "norbert", "sandro", "shelby", "travis", "victor", "whisper",
+          "m7", "norbert", "shelby", "travis", "victor", "whisper",
           "m8", "f1", "croak", "m1", "grandma"]
 
 
