@@ -3,6 +3,7 @@
 .python-version
 ref
 scratch
-tmp/
-pySpeakNG/
 archive/
+build/
+dist/
+*.spec
