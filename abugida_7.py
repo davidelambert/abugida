@@ -14,7 +14,7 @@
 # along with this program.  If not, see
 # <https://www.gnu.org/licenses/>.
 
-__version__ = '1.0b1'
+__version__ = '1.0b2'
 
 import sys
 import random
@@ -35,23 +35,27 @@ from PyQt5.QtWidgets import *
 
 HERE = Path(__file__).parent.resolve()
 
+# ROTATIONALS: up, down, left, right
 DELTA = (u'\u1403', u'\u1405', u'\u1401', u'\u140A')
 CHEVRON = (u'\u1431', u'\u1433', u'\u142F', u'\u1438')
 ARCH = (u'\u144E', u'\u1450', u'\u144C', u'\u1455')
+# REFLECTIONALS: upper left, upper right, lower right, lower left
 LOOP = (u'\u146D', u'\u146B', u'\u146F', u'\u1472')
 HOOK = (u'\u148B', u'\u1489', u'\u148D', u'\u1490')
 BAR = (u'\u14A5', u'\u14A3', u'\u14A7', u'\u14AA')
 
-CLAB = {'p': 'p', 'b': 'b', 'f': 'f', 'v': 'v', }
-CDENT = {'θ': 'T', 'ð': 'D', }
-CALV = {'t': 't', 'd': 'd', 's': 's', 'z': 'z', }
-CPALV = {'tʃ': 'tS', 'dʒ': 'dZ', 'ʃ': 'S', 'ʒ': 'Z', }
-CVEGL = {'k': 'k', 'g': 'g', 'h': 'h', }
-CNAS = {'m': 'm', 'n': 'n', }
-CAPP = {'l': 'l', 'r': 'r', 'j': 'j', 'w': 'w', }
-CON = CLAB | CDENT | CALV | CPALV | CVEGL | CNAS | CAPP
+# IPA-XSAMPA DICTIONARIES
+LABIAL = {'p': 'p', 'b': 'b', 'f': 'f', 'v': 'v', }
+DENTAL = {'θ': 'T', 'ð': 'D', }
+ALVEOLAR = {'t': 't', 'd': 'd', 's': 's', 'z': 'z', }
+POSTALVEOLAR = {'tʃ': 'tS', 'dʒ': 'dZ', 'ʃ': 'S', 'ʒ': 'Z', }
+VELAR_GLOTTAL = {'k': 'k', 'g': 'g', 'h': 'h', }
+NASAL = {'m': 'm', 'n': 'n', }
+APPROXIMANT = {'l': 'l', 'r': 'r', 'j': 'j', 'w': 'w', }
+CON = (LABIAL | DENTAL | ALVEOLAR | POSTALVEOLAR |
+       VELAR_GLOTTAL | NASAL | APPROXIMANT)
 VOW = {'i': 'i', 'o': 'o', 'e': 'e', 'a': 'a', }
-IPADICT = CON | VOW
+IXDICT = CON | VOW
 
 VOICES = ["Andrea", "Annie", "Antonio", "Auntie", "Belinda", "Boris", "Denis",
           "Diogo", "Ed", "Gene", "Gene2", "Henrique", "Hugo", "Iven", "Iven2",
@@ -691,7 +695,7 @@ class MainWindow(QMainWindow):
                 ipa = ipa + ' '
         self.ipa = ipa
         self.xsampa = ''.join(
-            [IPADICT[char] if char in IPADICT else ' ' for char in ipa])
+            [IXDICT[char] if char in IXDICT else ' ' for char in ipa])
 
     def swap(self):
         d = dict(zip(DELTA + CHEVRON + ARCH, LOOP + HOOK + BAR))
