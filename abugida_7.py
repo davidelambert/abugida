@@ -178,7 +178,7 @@ class DisplayWindow(QWidget):
     def __init__(self, text=''):
         super().__init__()
         self.setWindowTitle("Abugida 7")
-        self.setMinimumSize(1300, 975)
+        self.setMinimumSize(1184, 666)  # 16:9 @ 666px height
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setContentsMargins(50, 50, 50, 50)
         layout = QVBoxLayout()
@@ -188,8 +188,8 @@ class DisplayWindow(QWidget):
             str(HERE/'fonts/FreeSans.ttf'))
         font_fam = QFontDatabase.applicationFontFamilies(font_id)[0]
         font = QFont(font_fam)
-        font.setPointSize(144)
-        font.setWordSpacing(40)
+        font.setPointSize(84)
+        font.setWordSpacing(30)
         self.setFont(font)
 
         self.label = QLabel(text)
@@ -203,7 +203,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Abugida 7")
         self.setWindowIcon(QIcon(str(HERE/'img/abugida_icon.svg')))
-        self.setMinimumSize(1300, 975)
+        self.setMinimumSize(1184, 666)  # 16:9 @ 666px height
         layout = QVBoxLayout()
         layout.setContentsMargins(50, 50, 50, 50)
         layout.setSpacing(50)
@@ -232,11 +232,11 @@ class MainWindow(QMainWindow):
         container.setFont(font)
 
         disp_font = QFont(font_fam)
-        disp_font.setPointSize(72)
-        disp_font.setWordSpacing(40)
+        disp_font.setPointSize(32)
+        disp_font.setWordSpacing(20)
 
         ipa_font = QFont(font_fam)
-        ipa_font.setPointSize(16)
+        ipa_font.setPointSize(14)
         ipa_font.setWordSpacing(20)
 
         # DISPLAY ===========================
