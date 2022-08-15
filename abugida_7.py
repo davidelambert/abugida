@@ -552,6 +552,20 @@ class MainWindow(QMainWindow):
         sc_swap = QShortcut(QKeySequence('X'), self)
         sc_swap.activated.connect(self.click_swap)  # not a real "click"
 
+        # MENU =============
+        menu_bar = self.menuBar()
+        help_menu = menu_bar.addMenu('&Help')
+
+        help_phon = QAction('&Phonetic Symbols', self)
+        help_phon.setShortcut('Ctrl+p')
+        help_phon.triggered.connect(self.phon_win)
+        help_menu.addAction(help_phon)
+
+        help_sc = QAction('&Keyboard Shortcuts', self)
+        help_sc.setShortcut('Ctrl+k')
+        help_sc.triggered.connect(self.sc_win)
+        help_menu.addAction(help_sc)
+
         # ======= END __init__() =======
 
     def set_delta(self, s):
@@ -760,6 +774,12 @@ class MainWindow(QMainWindow):
             text=stressed
         )
         self.threadpool.start(self.runner)
+
+    def sc_win(self):
+        pass
+
+    def phon_win(self):
+        pass
 
 
 app = QApplication(sys.argv)
