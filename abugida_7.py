@@ -197,6 +197,10 @@ class DisplayWindow(QWidget):
         self.label.setWordWrap(True)
         layout.addWidget(self.label)
 
+        if QDesktopWidget().screenCount() > 1:
+            mon2 = QDesktopWidget().screenGeometry(2)
+            self.move(mon2.left() + 50, mon2.top() + 50)
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -220,7 +224,7 @@ class MainWindow(QMainWindow):
         self.threadpool = QThreadPool()
 
         # DESIGN CONSTANTS ================
-        BW = 150    # button width
+        BW = 120    # button width
         BH = 40     # button height
 
         # TYPOGRAPHY =====================
@@ -419,7 +423,7 @@ class MainWindow(QMainWindow):
         self.btn_gen.clicked.connect(self.generate)
         text_row.addWidget(self.btn_gen)
 
-        self.btn_randcon = QPushButton('Rand. Consonants')
+        self.btn_randcon = QPushButton('↻ Consonants')
         self.btn_randcon.setStatusTip(
             '(C) Randomize consonants for all shapes')
         self.btn_randcon.setFixedSize(BW, BH)
@@ -433,18 +437,11 @@ class MainWindow(QMainWindow):
         self.btn_speak.clicked.connect(self.speak)
         text_row.addWidget(self.btn_speak)
 
-        self.btn_randvoice = QPushButton('Rand. Voice')
+        self.btn_randvoice = QPushButton('↻ Voice')
         self.btn_randvoice.setStatusTip('(V) Randomize voice settings')
         self.btn_randvoice.setFixedSize(BW, BH)
         self.btn_randvoice.clicked.connect(self.random_voice)
         text_row.addWidget(self.btn_randvoice)
-
-        self.btn_log = QPushButton('Text Log: OFF')
-        self.btn_log.setStatusTip('Save syllabic phrases to text file')
-        self.btn_log.setCheckable(True)
-        self.btn_log.clicked.connect(self.toggle_log)
-        self.btn_log.setFixedSize(BW, BH)
-        text_row.addWidget(self.btn_log)
 
         self.btn_ext = QPushButton('Display: OFF')
         self.btn_ext.setStatusTip('Show/Hide external phrase display window')
@@ -452,6 +449,13 @@ class MainWindow(QMainWindow):
         self.btn_ext.clicked.connect(self.toggle_disp)
         self.btn_ext.setFixedSize(BW, BH)
         text_row.addWidget(self.btn_ext)
+
+        self.btn_log = QPushButton('Text Save: OFF')
+        self.btn_log.setStatusTip('Save syllabic phrases to text file')
+        self.btn_log.setCheckable(True)
+        self.btn_log.clicked.connect(self.toggle_log)
+        self.btn_log.setFixedSize(BW, BH)
+        text_row.addWidget(self.btn_log)
 
         # VOICE CONTROLS ===========================
         voice_row = QGridLayout()
@@ -527,7 +531,7 @@ class MainWindow(QMainWindow):
 
         ctl_box = QGroupBox()
         ctl_box.setLayout(ctl_grp)
-        ctl_box.setFixedWidth(1200)
+        ctl_box.setFixedWidth(1000)
         layout.addWidget(ctl_box, alignment=Qt.AlignCenter)
 
         # KEYBOARD SHORCUTS =============
